@@ -134,11 +134,12 @@ def rescale_image(img):
     f[ay:img.shape[0]+ay,ax:ax+img.shape[1]] = img
     return f
 
-def Number_Reader_ReadAPI_3(image, ocr_url, subscription):
+def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
+
 
     nx, ny = image.size
-    im2 = image.resize((int(nx*0.7), int(ny*0.7)), Image.BICUBIC)
-    
+    im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
+
 
     nx2, ny2 = im2.size
     
@@ -148,11 +149,19 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription):
 
     dst2 = cv2.cvtColor(np.array(im2), cv2.COLOR_BGR2GRAY)
     img2 = cv2.fastNlMeansDenoising(img1,None,6,21,21)
-    #plt.imshow(img2)
+
+    (thresh, dst) = cv2.threshold(dst2, 60, 255, cv2.THRESH_BINARY)
+    #plt.imshow(dst)
     #plt.show()
-    img = cv2.bilateralFilter(img2,9,9,9)
     
-    #plt.imshow(img1)
+    
+    img = cv2.bilateralFilter(dst,9,9,9)
+    
+    image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
+    filename=image_path_output+'-'+str(fcount)+'-'+str(count)+'.jpg'
+    cv2.imwrite(filename, img) 
+
+    #plt.imshow(img)
     #plt.show()
     #dst = cv2.fastNlMeansDenoising(np.array(im2),None,3,7,21)
     #dst2 = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
@@ -167,7 +176,9 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription):
     #img = cv2.adaptiveThreshold(img3,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
     #print(' img type: ',type(img), ' ==> ',img.shape)
 
-    imgin=rescale_image(img1)
+    #imgin=rescale_image(img1)
+    imgin=rescale_image(img)
+    #imgin=dst
     #plt.imshow(imgin)
     #plt.show()
 
@@ -1328,11 +1339,11 @@ def LocateVerticalPoint_2(imageIn):
     #print(' >>> ', pStartCut, ' :: ', pEndCut)
     return pStartCut, pEndCut
 
-def Number_Detection_ImageProc(imageIn):
+def Number_Detection_ImageProc(imageIn, fcount):
     num_out=[]
+    strnum_out=''
     
     count=0
-
     cropPoint=LocateNumber_2(imageIn)
     cropList=list(cropPoint)
     #print(' CP :', cropList)
@@ -1364,25 +1375,30 @@ def Number_Detection_ImageProc(imageIn):
 
         x1=0
         x2=im_widthC
-        y1=Top
-        y2=Bottom
+        y1=0 # Top
+        y2=im_heightC #Bottom
         #print(' : ',x1,' : ',x2,' : ', y1,' : ', y2)
         area2=(x1,y1,x2,y2)
         cropped_img_C=cropped_img.crop(area2)
         count=count+1
 
-        Read_Number, TotalProb=Number_Reader_ReadAPI_3(cropped_img_C, read_ocr_url, subscription)
+        Read_Number, TotalProb=Number_Reader_ReadAPI_3(cropped_img_C, read_ocr_url, subscription, count, fcount)
 
-        #print(' count : ', Read_Number, ' :: ', TotalProb)
+        print(' count : ', Read_Number, ' :: ', TotalProb)
         if not str(Read_Number):
             num_out.append('X')            
+            strnum_out=strnum_out+"-"
         else:
             num_out.append(Read_Number)
+            strnum_out=strnum_out+str(Read_Number)
 
-        #filename=image_path_output+series+'-'+str(count_file)+'-'+str(count)+'.jpg'
+        # Save cropped images (PIL format)
+        #image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
+        #filename=image_path_output+'-'+str(count)+'.jpg'
         #cropped_img_C.save(filename, quality=100)
 
         #cropped_img_C.show()
         #plt.show()
         plt.close()
     print(" Number : ", num_out)
+    return strnum_out

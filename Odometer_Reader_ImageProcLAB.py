@@ -16,10 +16,12 @@ from OdoMeter_Reader_Parameters_v4 import IfLicensePlatTag
 from OdoMeter_Reader_Parameters_v4 import MaskArea
 from OdoMeter_Reader_Parameters_v4 import MaskArea_2
 from OdoMeter_Reader_Parameters_v4 import Number_Detection_ImageProc as NDM
+from PIL import Image,  ImageEnhance
+import cv2
 
 # Get file name and location
 # Specify directory in which the images are kept
-image_path="C:/Users/70018928/Documents/GitHub/OdometerReader/TestImage/"
+image_path="C:/Users/70018928/Documents/GitHub/OdometerReader/ImageData/"
 
 image_path_output="C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/"
 
@@ -42,24 +44,17 @@ for n in files:
 
     count+=1
     TotalProb=0
+    Read_Number=""
     strnum=""
     # Detect Digitbar on the meter (Analog or Digital meter) with Custom vision - Object detection
     try:
-        print('Detect Meter ==> ',count,)
-        img1, img_m, img_dd, area, prob=dm(n,orp1.dm_ocr_url,orp1.headers)
-        if(IfLicensePlatTag(img_m)==1):
-            img1, img_m, img_dd, area, image_masked=MaskArea(area, image_path)
-        if(IfLicensePlatTag(img_m)==1):
-            img1, img_m, img_dd, area=MaskArea_2(area, image_masked)
+        
 
-        filename=image_path_output+str(count)+'.jpg'
-        img_dd.save(filename, quality=100)
-
-
-        Read_Number, TotalProb=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription)
+        Read_Number, TotalProb=readapi_3_1(n, orp1.read_ocr_url, orp1.subscription)
         print(' ReadAPI : ', Read_Number,' , TProb : ',TotalProb)
 
-        strnum=NDM(img_dd)
+        img_dd = Image.open(n)
+        strnum=NDM(img_dd, count)
 
         DigitNumber2 = ''
         ExtractNumber =''
