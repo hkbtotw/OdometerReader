@@ -54,6 +54,10 @@ for n in files:
         filename=image_path_output+str(count)+'.jpg'
         img_dd.save(filename, quality=100)
 
+
+        Read_Number, TotalProb=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription)
+        print(' ReadAPI : ', Read_Number,' , TProb : ',TotalProb)
+
         NDM(img_dd)
 
         DigitNumber2 = ''

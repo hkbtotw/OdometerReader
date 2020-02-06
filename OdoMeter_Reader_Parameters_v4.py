@@ -125,7 +125,7 @@ def rescale_image(img):
     #Getting the bigger side of the image
     s = max(img.shape[0:2])
     #Creating a dark square with NUMPY  
-    f = np.zeros((2*s,2*s),np.uint8)
+    f = np.zeros((3*s,3*s),np.uint8)
 
     #Getting the centering position
     ax,ay = (s - img.shape[1])//2,(s - img.shape[0])//2
@@ -137,8 +137,8 @@ def rescale_image(img):
 def Number_Reader_ReadAPI_3(image, ocr_url, subscription):
 
     nx, ny = image.size
-    #im2 = image.resize((int(nx*0.7), int(ny*0.7)), Image.BICUBIC)
-    im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
+    im2 = image.resize((int(nx*0.7), int(ny*0.7)), Image.BICUBIC)
+    
 
     nx2, ny2 = im2.size
     
@@ -148,12 +148,12 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription):
 
     dst2 = cv2.cvtColor(np.array(im2), cv2.COLOR_BGR2GRAY)
     img2 = cv2.fastNlMeansDenoising(img1,None,6,21,21)
-    plt.imshow(img2)
-    plt.show()
+    #plt.imshow(img2)
+    #plt.show()
     img = cv2.bilateralFilter(img2,9,9,9)
     
-    plt.imshow(img)
-    plt.show()
+    #plt.imshow(img1)
+    #plt.show()
     #dst = cv2.fastNlMeansDenoising(np.array(im2),None,3,7,21)
     #dst2 = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
     #(thresh, dst2) = cv2.threshold(dst, 105, 255, cv2.THRESH_BINARY)
@@ -166,7 +166,11 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription):
     #img3 = cv2.medianBlur(img2,5)
     #img = cv2.adaptiveThreshold(img3,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
     #print(' img type: ',type(img), ' ==> ',img.shape)
-    imgin=rescale_image(img)
+
+    imgin=rescale_image(img1)
+    #plt.imshow(imgin)
+    #plt.show()
+
 
     im_resize=imgin
     is_success, im_buf_arr = cv2.imencode(".jpg", im_resize)
@@ -258,8 +262,8 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription):
             cha=''
         output=output+cha
 
-    result1=re.sub("[^0-9]", "", output)
-
+    #result1=re.sub("[^0-9]", "", output)
+    result1=output
 
     if(len(result1)>6):
         result=result1[:6]
@@ -1325,7 +1329,10 @@ def LocateVerticalPoint_2(imageIn):
     return pStartCut, pEndCut
 
 def Number_Detection_ImageProc(imageIn):
+    num_out=[]
+    
     count=0
+
     cropPoint=LocateNumber_2(imageIn)
     cropList=list(cropPoint)
     #print(' CP :', cropList)
@@ -1366,7 +1373,11 @@ def Number_Detection_ImageProc(imageIn):
 
         Read_Number, TotalProb=Number_Reader_ReadAPI_3(cropped_img_C, read_ocr_url, subscription)
 
-        print(' count : ', Read_Number, ' :: ', TotalProb)
+        #print(' count : ', Read_Number, ' :: ', TotalProb)
+        if not str(Read_Number):
+            num_out.append('X')            
+        else:
+            num_out.append(Read_Number)
 
         #filename=image_path_output+series+'-'+str(count_file)+'-'+str(count)+'.jpg'
         #cropped_img_C.save(filename, quality=100)
@@ -1374,3 +1385,4 @@ def Number_Detection_ImageProc(imageIn):
         #cropped_img_C.show()
         #plt.show()
         plt.close()
+    print(" Number : ", num_out)
