@@ -32,7 +32,7 @@ for file in glob.glob(path):
 print(' ==> ',files)
 
 #Prepare table
-df_Data=pd.DataFrame(columns = ['filename','Meter(Confidence)', 'ReadAPI(ALL)', 'ReadAPI(Separated)'])
+df_Data=pd.DataFrame(columns = ['filename','Meter(Confidence)', 'ReadAPI(ALL)', 'ReadAPI(Separated)','Classification'])
 
 #================================================================================
 #Specify input path
@@ -46,6 +46,7 @@ for n in files:
     TotalProb=0
     Read_Number=""
     strnum=""
+    classifiedStrNum=""
     # Detect Digitbar on the meter (Analog or Digital meter) with Custom vision - Object detection
     try:
         
@@ -54,7 +55,7 @@ for n in files:
         print(' ReadAPI : ', Read_Number,' , TProb : ',TotalProb)
 
         img_dd = Image.open(n)
-        strnum=NDM(img_dd, count)
+        strnum, classifiedStrNum =NDM(img_dd, count)
 
         DigitNumber2 = ''
         ExtractNumber =''
@@ -68,9 +69,9 @@ for n in files:
         print(' ERROR somewhere')
     
     ##Summarize Analysis
-    newrow= {'filename':n,'Meter(Confidence)':TotalProb,'ReadAPI(ALL)':Read_Number, 'ReadAPI(Separated)':strnum}
+    newrow= {'filename':filename,'Meter(Confidence)':TotalProb,'ReadAPI(ALL)':Read_Number, 'ReadAPI(Separated)':strnum, 'Classification':classifiedStrNum}
     df_Data = df_Data.append(newrow, ignore_index=True)
-    #print(' ==> ', df_Data)
+    print(' ==> ', df_Data)
 
 ## Display summary
 print(' ==> ', df_Data)

@@ -42,7 +42,7 @@ mac_Semi_cl_ocr_url = mac_endpoint + "customvision/v3.0/Prediction/7b99cf70-06ec
 mac_FSemi_cl_ocr_url = mac_endpoint + "customvision/v3.0/Prediction/433bd650-ef35-48f6-aeb0-e9b7f4071f2b/classify/iterations/Iteration2/image"
 
 #Gray_Full+Semi recognition by Classfication
-mac_GFS_cl_ocr_url = mac_endpoint + "customvision/v3.0/Prediction/9f605dd7-932e-41a5-8ed3-461f7c55d50c/classify/iterations/Iteration2/image"
+mac_GFS_cl_ocr_url = mac_endpoint + "customvision/v3.0/Prediction/433bd650-ef35-48f6-aeb0-e9b7f4071f2b/classify/iterations/Iteration2/image"
 
 # Digit recognition by Classification
 
@@ -1341,8 +1341,9 @@ def LocateVerticalPoint_2(imageIn):
 
 def Number_Detection_ImageProc(imageIn, fcount):
     num_out=[]
+    classNum_out=[]
     strnum_out=''
-    
+    strClassNum_Out=''
     count=0
     cropPoint=LocateNumber_2(imageIn)
     cropList=list(cropPoint)
@@ -1384,7 +1385,7 @@ def Number_Detection_ImageProc(imageIn, fcount):
 
         Read_Number, TotalProb=Number_Reader_ReadAPI_3(cropped_img_C, read_ocr_url, subscription, count, fcount)
 
-        print(' count : ', Read_Number, ' :: ', TotalProb)
+        #print(' count : ', Read_Number, ' :: ', TotalProb)
         if not str(Read_Number):
             num_out.append('X')            
             strnum_out=strnum_out+"-"
@@ -1397,8 +1398,17 @@ def Number_Detection_ImageProc(imageIn, fcount):
         #filename=image_path_output+'-'+str(count)+'.jpg'
         #cropped_img_C.save(filename, quality=100)
 
+        classifiedNumber, classificationProb= Number_Detection_Classification_2(cropped_img_C,mac_GFS_cl_ocr_url,mac_headers)
+        #print(' classifiedNumber : ', classifiedNumber, ' :: ', classificationProb)
+        classNum_out.append(classifiedNumber)
+        if(classificationProb>0.85):
+            strClassNum_Out=strClassNum_Out+','+str(classifiedNumber)+','  
+        else:
+            strClassNum_Out=strClassNum_Out+'('+str(classifiedNumber)+')'  
+
+
         #cropped_img_C.show()
         #plt.show()
         plt.close()
     print(" Number : ", num_out)
-    return strnum_out
+    return strnum_out, strClassNum_Out
