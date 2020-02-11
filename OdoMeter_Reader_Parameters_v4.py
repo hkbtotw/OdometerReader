@@ -125,7 +125,7 @@ def rescale_image(img):
     #Getting the bigger side of the image
     s = max(img.shape[0:2])
     #Creating a dark square with NUMPY  
-    f = np.zeros((3*s,3*s),np.uint8)
+    f = np.zeros((2*s,2*s),np.uint8)
 
     #Getting the centering position
     ax,ay = (s - img.shape[1])//2,(s - img.shape[0])//2
@@ -138,6 +138,7 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
 
 
     nx, ny = image.size
+    #im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
     im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
 
 
@@ -160,7 +161,7 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
     # Write out processed image for checking 
     image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
     filename=image_path_output+'-'+str(fcount)+'-'+str(count)+'.jpg'
-    cv2.imwrite(filename, img) 
+    cv2.imwrite(filename, img2) 
 
     #plt.imshow(img)
     #plt.show()
@@ -178,7 +179,7 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
     #print(' img type: ',type(img), ' ==> ',img.shape)
 
     #imgin=rescale_image(img1)
-    imgin=rescale_image(img)
+    imgin=rescale_image(img2)
     #imgin=dst
     #plt.imshow(imgin)
     #plt.show()
@@ -548,7 +549,8 @@ def Detect_Meter(img_path,ocr_url,headers):
     cropped_img_m=image.crop(area_m)
 
     # cropped for digit detection
-    area1=(x-0.*w,top-0.2*h,x+1.0*w,top+1.2*h)
+    ##area1=(x-0.*w,top-0.2*h,x+1.0*w,top+1.2*h)   #### Cut for Analog Meter
+    area1=(x-0.2*w,top-0.2*h,x+1.4*w,top+1.2*h)    ### Cut for Digital Meter
     cropped_img1=image.crop(area1)
 
 

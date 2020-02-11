@@ -19,9 +19,10 @@ from OdoMeter_Reader_Parameters_v4 import MaskArea_2
 
 # Get file name and location
 # Specify directory in which the images are kept
-#image_path="C:/Users/70032204/Pictures/Analog/TBL_Real/"
-image_path="Desktop/IMG_9007"
-#image_path="C:/Users/70032204/Pictures/Analog/test/"
+image_path="C:/Users/70018928/Documents/GitHub/OdometerReader/DigitalTestImage/"
+
+image_path_output="C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/"
+
 path=image_path+"*.jpg"
 files = []
 for file in glob.glob(path):
@@ -60,7 +61,7 @@ for n in files:
         RealProp = ''
         TrueFalse = ''
         print('Read API ==>  ',count,)
-        Read_Number, TotalProb=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription)
+        Read_Number, TotalProb=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription, count, count)
         print('Number from API ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
         if len(Read_Number) > 0:
             ExtractNumber = Read_Number
@@ -109,5 +110,7 @@ for n in files:
 ## Display summary
 print(' ==> ', df_Data)
 
-file_path =r'Desktop\Output.csv'
+file_path =r'C:\Users\70018928\Documents\GitHub\OdometerReader\Output_TestImage\Output.csv'
 df_Data.to_csv(file_path)
+
+print(' ========= Complete ========== ')
