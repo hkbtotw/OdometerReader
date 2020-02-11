@@ -541,7 +541,7 @@ def Detect_Meter(img_path,ocr_url,headers):
 
 
     # cropped for calling api
-    area=(x-0.1*w,top-0.1*h,x+1.1*w,top+1.1*h)
+    area=(x-0.*w,top-0.*h,x+1.*w,top+1.*h)
     cropped_img=image.crop(area)
 
     # cropped for masking
@@ -1243,6 +1243,10 @@ def LocateNumber_2(imageIn):
     hsv_img = cv2.cvtColor(np.array(imageIn), cv2.COLOR_BGR2HSV)
     h, s, v = hsv_img[:, :, 0], hsv_img[:, :, 1], hsv_img[:, :, 2]
 
+    #plt.imshow(s)
+    #plt.show()
+
+
     #print(s, ' ==> ',s.shape)
     proj = np.sum(s,0)  # Compute Horizontal projection with 0 , Vertical with 1 as argument
     #print(' ==> ', np.mean(proj))
@@ -1264,9 +1268,9 @@ def LocateNumber_2(imageIn):
     peaks, _ = find_peaks(-pin, prominence=1.5)
     #print(' peak x :', peaks)
 
-    plt.plot(proj)
-    plt.plot(peaks, pin[peaks], "x")
-    #plt.show()
+#    plt.plot(proj)
+#    plt.plot(peaks, pin[peaks], "x")
+#    plt.show()
     plt.close()
 
     return peaks
@@ -1422,3 +1426,4 @@ def Number_Detection_ImageProc(imageIn, fcount):
         plt.close()
     print(" Number : ", num_out)
     return strnum_out, strClassNum_Out, strClassProb_Out
+
