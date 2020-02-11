@@ -158,9 +158,9 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
     img = cv2.bilateralFilter(dst,9,9,9)
     
     # Write out processed image for checking 
-    #image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
-    #filename=image_path_output+'-'+str(fcount)+'-'+str(count)+'.jpg'
-    #cv2.imwrite(filename, img) 
+    image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
+    filename=image_path_output+'-'+str(fcount)+'-'+str(count)+'.jpg'
+    cv2.imwrite(filename, img) 
 
     #plt.imshow(img)
     #plt.show()
@@ -537,7 +537,8 @@ def Detect_Meter(img_path,ocr_url,headers):
     #image_path1 =r'C:\Users\70018928\Documents\Project 2019\Ad-hoc\Odometer_Image\Meter_Detection\Original_Image\pil_1.jpg'
     #image_path2 =r'C:\Users\70018928\Documents\Project 2019\Ad-hoc\Odometer_Image\Meter_Detection\Original_Image\cv2_1.jpg'
     #cv2.imwrite(image_path2,cropped_img)
-   
+
+
     # cropped for calling api
     area=(x-0.1*w,top-0.1*h,x+1.1*w,top+1.1*h)
     cropped_img=image.crop(area)
@@ -547,7 +548,7 @@ def Detect_Meter(img_path,ocr_url,headers):
     cropped_img_m=image.crop(area_m)
 
     # cropped for digit detection
-    area1=(x-0.*w,top-0.*h,x+1.*w,top+1.*h)
+    area1=(x-0.*w,top-0.2*h,x+1.0*w,top+1.2*h)
     cropped_img1=image.crop(area1)
 
 
@@ -1345,6 +1346,7 @@ def Number_Detection_ImageProc(imageIn, fcount):
     classNum_out=[]
     strnum_out=''
     strClassNum_Out=''
+    strClassProb_Out=1.0
     count=0
     cropPoint=LocateNumber_2(imageIn)
     cropList=list(cropPoint)
@@ -1403,13 +1405,18 @@ def Number_Detection_ImageProc(imageIn, fcount):
         #print(' classifiedNumber : ', classifiedNumber, ' :: ', classificationProb)
         classNum_out.append(classifiedNumber)
         if(classificationProb>0.85):
-            strClassNum_Out=strClassNum_Out+','+str(classifiedNumber)+','  
+            if(count<=6):
+                strClassNum_Out=strClassNum_Out+','+str(classifiedNumber)+','  
+                strClassProb_Out*=classificationProb
         else:
-            strClassNum_Out=strClassNum_Out+'('+str(classifiedNumber)+')'  
+            if(count<=6):
+                strClassNum_Out=strClassNum_Out+'('+str(classifiedNumber)+')'  
+                strClassProb_Out*=classificationProb
+                #print(' LowProb Detection : ', classifiedNumber, ' , Prob : ',classificationProb)
 
-
+        print(' ==> ,',count, ' :: ',strClassNum_Out, ' :: ', strClassProb_Out)
         #cropped_img_C.show()
         #plt.show()
         plt.close()
     print(" Number : ", num_out)
-    return strnum_out, strClassNum_Out
+    return strnum_out, strClassNum_Out, strClassProb_Out

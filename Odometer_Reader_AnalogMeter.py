@@ -19,7 +19,7 @@ from OdoMeter_Reader_Parameters_v4 import Number_Detection_ImageProc as NDM
 
 # Get file name and location
 # Specify directory in which the images are kept
-image_path="C:/Users/70018928/Documents/GitHub/OdometerReader/TestImage/testmile/"
+image_path="C:/Users/70018928/Documents/GitHub/OdometerReader/TestImage/testmile_real/"
 
 image_path_output="C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/"
 
