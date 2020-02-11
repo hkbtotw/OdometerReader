@@ -80,4 +80,7 @@ for n in files:
 
 ## Display summary
 print(' ==> ', df_Data)
+file_path =r'C:\Users\70018928\Documents\GitHub\OdometerReader\Output_TestImage\Output.csv'
+df_Data.to_csv(file_path)
+
 print(' ======== Complete ============ ')

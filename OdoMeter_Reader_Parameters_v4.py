@@ -157,9 +157,10 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
     
     img = cv2.bilateralFilter(dst,9,9,9)
     
-    image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
-    filename=image_path_output+'-'+str(fcount)+'-'+str(count)+'.jpg'
-    cv2.imwrite(filename, img) 
+    # Write out processed image for checking 
+    #image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
+    #filename=image_path_output+'-'+str(fcount)+'-'+str(count)+'.jpg'
+    #cv2.imwrite(filename, img) 
 
     #plt.imshow(img)
     #plt.show()
@@ -273,8 +274,8 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
             cha=''
         output=output+cha
 
-    #result1=re.sub("[^0-9]", "", output)
-    result1=output
+    result1=re.sub("[^0-9]", "", output)
+    #result1=output
 
     if(len(result1)>6):
         result=result1[:6]
@@ -538,7 +539,7 @@ def Detect_Meter(img_path,ocr_url,headers):
     #cv2.imwrite(image_path2,cropped_img)
    
     # cropped for calling api
-    area=(x-0.5*w,top-0.1*h,x+1.5*w,top+2.0*h)
+    area=(x-0.1*w,top-0.1*h,x+1.1*w,top+1.1*h)
     cropped_img=image.crop(area)
 
     # cropped for masking
@@ -546,7 +547,7 @@ def Detect_Meter(img_path,ocr_url,headers):
     cropped_img_m=image.crop(area_m)
 
     # cropped for digit detection
-    area1=(x-0*w,top-0*h,x+1*w,top+1*h)
+    area1=(x-0.*w,top-0.*h,x+1.*w,top+1.*h)
     cropped_img1=image.crop(area1)
 
 
