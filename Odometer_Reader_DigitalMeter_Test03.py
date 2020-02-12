@@ -15,9 +15,10 @@ from OdoMeter_Reader_Parameters_v4 import Number_Reader_ReadAPI_3_1 as readapi_3
 from OdoMeter_Reader_Parameters_v4 import IfLicensePlatTag
 from OdoMeter_Reader_Parameters_v4 import MaskArea
 from OdoMeter_Reader_Parameters_v4 import MaskArea_2
-from OdoMeter_Reader_Parameters_v4 import Number_Detection_ImageProc as NDM
+from OdoMeter_Reader_Parameters_v4 import Detect_Digital_Number_Bar as DDNB
 
 # Get file name and location
+
 # Specify directory in which the images are kept
 image_path="C:/Users/70018928/Documents/GitHub/OdometerReader/DigitalTestImage/"
 
@@ -30,7 +31,7 @@ for file in glob.glob(path):
 #print(' ==> ',files)
 
 #Prepare table
-df_Data=pd.DataFrame(columns = ['filename','Number', 'Meter(Confidence)','Extract Number','Confidence','Check', 'CS'])
+df_Data=pd.DataFrame(columns = ['filename','Number', 'Meter(Confidence)','Extract Number','Confidence','Check'])
 #================================================================================
 #Specify input path
 count = 0
@@ -48,7 +49,7 @@ for n in files:
     print(' ==> ',filename ,' ==> ', RNumber)
     
     # Detect Digitbar on the meter (Analog or Digital meter) with Custom vision - Object detection
-    
+
     try:
         print('Detect Meter ==> ',count,)
         img1, img_m, img_dd, area, prob=dm(n,orp1.dm_ocr_url,orp1.headers)
@@ -61,14 +62,14 @@ for n in files:
         RealProp = ''
         TrueFalse = ''
         print('Read API ==>  ',count,)
-        Read_Number, TotalProb=readapi_3(img1, orp1.read_ocr_url, orp1.subscription, count, count)
+
+        #img1, img_m, img_dd, area, prob=DDNB(img_dd,orp1.dgm_ocr_url,orp1.headers)
+        #Read_Number, TotalProb=readapi_3_1(n, orp1.read_ocr_url, orp1.subscription)
+        Read_Number, TotalProb=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription, count, count)
         #Read_Number, TotalProb=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription, count, count)
         print('Number from API ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
         ExtractNumber = Read_Number
 
-
-        strnum, classifiedStrNum, classifiedProb =NDM(img1, count)
-        print(' classifiedProb : ', classifiedStrNum, ' :: prob ::', classifiedProb)
 
         """
         if len(Read_Number) > 0:
@@ -115,7 +116,7 @@ for n in files:
     else:
         TrueFalse = 'False'
 
-    newrow= {'filename':filename,'Number':RNumber , 'Meter(Confidence)':prob,  'Extract Number':ExtractNumber , 'Confidence':RealProp, 'Check':TrueFalse, 'CS': classifiedStrNum}
+    newrow= {'filename':filename,'Number':RNumber , 'Meter(Confidence)':prob,  'Extract Number':ExtractNumber , 'Confidence':RealProp, 'Check':TrueFalse}
     df_Data = df_Data.append(newrow, ignore_index=True)
     print(' ==> ', df_Data)
 

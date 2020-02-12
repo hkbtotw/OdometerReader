@@ -20,6 +20,8 @@ from scipy.signal import find_peaks
 mac_ep2="https://southeastasia.api.cognitive.microsoft.com/"
 mac_sub2='f34ac0f710884d41a55d6385545c2962'
 
+
+
 # Meter Detection
 dm_endpoint="https://southeastasia.api.cognitive.microsoft.com/"
 subscription='2931247984204b1c997ad8ebcc1c80b7'
@@ -27,8 +29,14 @@ subscription='2931247984204b1c997ad8ebcc1c80b7'
 #dm_ocr_url = dm_endpoint + "customvision/v3.0/Prediction/37ef4479-4819-4b1e-b16f-7a2f24e9bfb2/detect/iterations/Iteration1/image"
 dm_ocr_url = dm_endpoint + "customvision/v3.0/Prediction/95dba6d3-4d44-4b23-bad3-dd9d0a15090e/detect/iterations/Iteration3/image"
 
+# Detect Numberbar from Cropped Digital Meter Image
+dgm_ocr_url = dm_endpoint +"customvision/v3.0/Prediction/a09432d4-7c08-4b05-9dce-ba1daa5b1e17/detect/iterations/Iteration2/image"
+
+
 # Digit recognition
 dc_ocr_url = dm_endpoint + "customvision/v3.0/Prediction/eade7071-a13c-4eab-9f81-0b4afeaa8be9/detect/iterations/Iteration2/image"
+
+
 
 
 # Digit location
@@ -136,33 +144,36 @@ def rescale_image(img):
 
 def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
 
-
+    img_origin=image
     nx, ny = image.size
     #im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
     im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
-
-
     nx2, ny2 = im2.size
     
     im_cv = np.array(im2)
-    #img1 = cv2.cvtColor(im_cv, cv2.COLOR_BGR2RGB)
+    img3 = cv2.cvtColor(im_cv, cv2.COLOR_BGR2RGB)
     img1 = cv2.cvtColor(np.array(im2), cv2.COLOR_BGR2GRAY)
 
     dst2 = cv2.cvtColor(np.array(im2), cv2.COLOR_BGR2GRAY)
     img2 = cv2.fastNlMeansDenoising(img1,None,6,21,21)
 
-    (thresh, dst) = cv2.threshold(dst2, 60, 255, cv2.THRESH_BINARY)
-    #plt.imshow(dst)
+    (thresh, dst) = cv2.threshold(dst2, 180, 255, cv2.THRESH_BINARY)
+
+    
+    blurred = cv2.GaussianBlur(im_cv, (5, 5), 0)
+    edges = cv2.Canny(blurred, 50, 200, 255)
+    #plt.imshow(edges)
     #plt.show()
+
     
-    
-    img = cv2.bilateralFilter(dst,9,9,9)
+    #img = cv2.bilateralFilter(dst,9,9,9)
     
     # Write out processed image for checking 
-    image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
-    filename=image_path_output+'-'+str(fcount)+'-'+str(count)+'.jpg'
-    cv2.imwrite(filename, img2) 
+    #image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
+    #filename=image_path_output+'-'+str(fcount)+'-'+str(count)+'.jpg'
+    #cv2.imwrite(filename, img2) 
 
+    
     #plt.imshow(img)
     #plt.show()
     #dst = cv2.fastNlMeansDenoising(np.array(im2),None,3,7,21)
@@ -178,12 +189,11 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
     #img = cv2.adaptiveThreshold(img3,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
     #print(' img type: ',type(img), ' ==> ',img.shape)
 
-    #imgin=rescale_image(img1)
+    #imgin=rescale_image(img3)
     imgin=rescale_image(img2)
     #imgin=dst
     #plt.imshow(imgin)
     #plt.show()
-
 
     im_resize=imgin
     is_success, im_buf_arr = cv2.imencode(".jpg", im_resize)
@@ -192,8 +202,8 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
     image_data=byte_im
 
     headers = {'Ocp-Apim-Subscription-Key': subscription, 'Content-Type': 'application/octet-stream'}
-    params = {'language': 'en', 'detectOrientation': 'true'}
-    #params = {'language': 'unk'}
+    #params = {'language': 'en', 'detectOrientation': 'true'}
+    params = {'language': 'unk'}
 
     response = requests.post(ocr_url, headers=headers, params=params, data = image_data)
 
@@ -222,7 +232,7 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
     line_infos = [line["text"] for line in analysis["recognitionResults"][0]["lines"]]
     #conf_infos = [word["text"] for word in analysis["recognitionResults"][0]["lines"]["words"]]
     #print(' :: ', line_infos)
-    #print(' c :: ',analysis["recognitionResults"][0]["lines"])
+    print(' c :: ',analysis["recognitionResults"][0]["lines"])
     TotalProb=0
     for wb in analysis["recognitionResults"][0]["lines"]:
         sumProb=0
@@ -291,7 +301,26 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
         # Extract the recognized text, with bounding boxes.
         polygons = [(line["boundingBox"], line["text"])
                     for line in analysis["recognitionResults"][0]["lines"]]
+        print(' PG : ',polygons, ' == ', type(polygons), ' :: ',len(polygons))
+    
+    polyLen=len(polygons)
+    print(' pL : ',polyLen)
+    polyMax=0
+    nMax=0
+    nPos=[]
+    for n in range(polyLen):
+        #print(' :: ', n)
+        polyDiff=polygons[n][0][2]-polygons[n][0][0]
+        if(polyDiff>polyMax):
+            nMax=n
+            polyMax=polyDiff
+            nPos=polygons[n][0]
+            print(' ==> ', nMax, ' --- ',nPos )
+        
+    print(' F ==> ', nMax, ' --- ',nPos )
 
+
+    
 
     # Display the image and overlay it with the extracted text.
     plt.figure(figsize=(15, 15))
@@ -309,6 +338,26 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription, count, fcount):
 
     #plt.show()
     plt.close()
+
+
+    i_width, i_height = Image.fromarray(imgin).size
+    print(' i : ',i_width, '  :: ',i_height)
+    x=nPos[0]
+    w=nPos[2]-nPos[0]
+    h=nPos[5]-nPos[1]
+    top=nPos[1]
+
+    print(' x :',x,' : ',top,' : ',w,' : ',h)
+    area=(x-0.*w,top-0.*h,x+1.*w,top+1.*h)
+    img_out=Image.fromarray(imgin).crop(area)
+
+
+
+    image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
+    image_path1=image_path_output+'-1-'+str(fcount)+'-'+str(count)+'.jpg'
+    img_out.save(image_path1, quality=100)
+
+
     return result, TotalProb
 
 def Number_Reader_ReadAPI_3_1(img_path, ocr_url, subscription):
@@ -465,13 +514,13 @@ def Detect_Meter(img_path,ocr_url,headers):
     success, encoded_image = cv2.imencode('.jpg', dst)
     image_data = encoded_image.tobytes()
 
-    #print(' image_data : ',type(image_data))
+    print(' image_data : ',type(image_data))
 
     response = requests.post(ocr_url, headers=headers, data = image_data)
     response.raise_for_status()
     analysis = response.json()
 
-    #print(' ==> analysis : ',analysis)
+    print(' ==> analysis : ',analysis)
 
     # Extract the word bounding boxes and text.
     line_infos = analysis["predictions"]
@@ -509,7 +558,7 @@ def Detect_Meter(img_path,ocr_url,headers):
 
     #print(" - Probability - TagName - Left Loc. - Height Loc. -")
     for line in line_infos:
-        if( line['probability']>0.1 ):  
+        if( line['probability']>0.3 ):  
             #print(' ==> ',line['probability'], '====> ',line['tagName'], ' ====> ',line['boundingBox']['left'], ' :: ',line['boundingBox']['height'])
             left=line['boundingBox']['left']
             top=line['boundingBox']['top']
@@ -533,7 +582,7 @@ def Detect_Meter(img_path,ocr_url,headers):
     w=df_out['width'][0]
     top=df_out['top'][0]
     h=df_out['height'][0]
-    #print(' ==> ',x,w,top,h)
+    print(' detect meter ==> ',x,w,top,h)
     cropped_img = img[int(top-0.5*h):int(top+1.5*h), int(x-0.5*w):int(x+1.5*w)]
     #image_path1 =r'C:\Users\70018928\Documents\Project 2019\Ad-hoc\Odometer_Image\Meter_Detection\Original_Image\pil_1.jpg'
     #image_path2 =r'C:\Users\70018928\Documents\Project 2019\Ad-hoc\Odometer_Image\Meter_Detection\Original_Image\cv2_1.jpg'
@@ -541,7 +590,7 @@ def Detect_Meter(img_path,ocr_url,headers):
 
 
     # cropped for calling api
-    area=(x-0.*w,top-0.*h,x+1.*w,top+1.*h)
+    area=(x+0.05*w,top-0.05*h,x+1.4*w,top+1.05*h)
     cropped_img=image.crop(area)
 
     # cropped for masking
@@ -1427,3 +1476,109 @@ def Number_Detection_ImageProc(imageIn, fcount):
     print(" Number : ", num_out)
     return strnum_out, strClassNum_Out, strClassProb_Out
 
+def Detect_Digital_Number_Bar(image,ocr_url,headers):
+    nx, ny = image.size
+    im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
+    image.show()
+
+    nx2, ny2 = im2.size
+    dst2 = cv2.cvtColor(np.array(im2), cv2.COLOR_BGR2GRAY)
+    dst = cv2.fastNlMeansDenoising(dst2,None,6,7,21)
+
+   
+    success, encoded_image = cv2.imencode('.jpg', dst)
+    #success, encoded_image = cv2.imencode('.jpg', im2)
+    image_data = encoded_image.tobytes()
+
+    #print(' image_data : ',type(image_data))
+
+    response = requests.post(ocr_url, headers=headers, data = image_data)
+    response.raise_for_status()
+    analysis = response.json()
+
+    #print(' ==> analysis : ',analysis)
+
+    # Extract the word bounding boxes and text.
+    line_infos = analysis["predictions"]
+    word_infos = []
+
+
+    image1 = image
+    #rotated = image.rotate(0)
+    #try:
+    #    # Grab orientation value.
+    #    image_exif = image._getexif()
+    #    image_orientation = image_exif[274]
+        # Rotate depending on orientation.
+    #    if image_orientation == 3:
+    #        rotated = image.rotate(180)
+    #    if image_orientation == 6:
+    #        rotated = image.rotate(-90)
+    #    if image_orientation == 8:
+    #        rotated = image.rotate(90)
+    # Save rotated image.
+    #    rotated.save('rotated.jpg')
+    #except:
+    #    pass
+    #image=rotated
+
+    im_width, im_height = image.size
+    #im_height, im_width, channels = image.shape
+    #print(' image : ',type(image),' :: ',type(image1), ' ==> ',im_width,':',im_height)
+    ax = plt.imshow(image, alpha=0.5)
+
+    df_line = pd.DataFrame(columns = ['prob', 'left','top','width','height'])
+
+    #print(" - Probability - TagName - Left Loc. - Height Loc. -")
+    for line in line_infos:
+        if( line['probability']>0.1 ):  
+            #print(' ==> ',line['probability'], '====> ',line['tagName'], ' ====> ',line['boundingBox']['left'], ' :: ',line['boundingBox']['height'])
+            left=line['boundingBox']['left']
+            top=line['boundingBox']['top']
+            width=line['boundingBox']['width']
+            height=line['boundingBox']['height']
+            newrow= {'prob':line['probability'], 'left':left*im_width, 'top':top*im_height, 'width':width*im_width, 'height':height*im_height  }
+            df_line = df_line.append(newrow, ignore_index=True)
+            prob_text='{0:.1f}'.format(line['probability']*100)
+            text=line['tagName']+', '+str(prob_text)+'%'
+            origin = (left*im_width, top*im_height)
+            patch = Rectangle(origin, width*im_width, height*im_height,fill=False, linewidth=2, color='y')
+            ax.axes.add_patch(patch)
+            plt.text(origin[0], origin[1], text, fontsize=8, weight="bold", va="top")
+
+    df_line=df_line.sort_values(by=['prob'],ascending=False).reset_index()
+
+    df_out=df_line.loc[df_line.prob==df_line.prob.max()]
+
+    maxprob=df_out.prob.max()
+    x=df_out['left'][0]
+    w=df_out['width'][0]
+    top=df_out['top'][0]
+    h=df_out['height'][0]
+   
+    # cropped for calling api
+    area=(x+0.05*w,top-0.05*h,x+1.4*w,top+1.05*h)
+    cropped_img=image.crop(area)
+
+    # cropped for masking
+    area_m=(x-0.1*w,top-0.1*h,x+1.1*w,top+1.1*h)
+    cropped_img_m=image.crop(area_m)
+
+    # cropped for digit detection
+    ##area1=(x-0.*w,top-0.2*h,x+1.0*w,top+1.2*h)   #### Cut for Analog Meter
+    area1=(x-0.2*w,top-0.2*h,x+1.4*w,top+1.2*h)    ### Cut for Digital Meter
+    cropped_img1=image.crop(area1)
+
+
+    #cropped_img=image[int(top-0.3*h):int(top+1.3*h), int(x-0.3*w):int(x+1.3*w)]
+    #cv2.imshow('image',cropped_img)
+    cv_area=[int(top-0.3*h),int(top+1.3*h), int(x-0.3*w),int(x+1.3*w)]
+    #print(' ==>',type(cropped_img))
+    #cropped_img.save(image_path1, quality=100)
+ 
+    #print(' -- ',type(cropped_img))
+
+    plt.axis("off")
+    plt.show()
+    plt.close()
+    return cropped_img, cropped_img_m, cropped_img1, cv_area, maxprob
