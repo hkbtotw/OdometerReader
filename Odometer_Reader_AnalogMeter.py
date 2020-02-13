@@ -59,7 +59,8 @@ for n in files:
         img_dd.save(filename1, quality=100)
 
 
-        Read_Number, TotalProb=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription, count, count)
+        Read_Number, TotalProb, img_ddd=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription, count, count)
+
         print(' ReadAPI : ', Read_Number,' , TProb : ',TotalProb)
 
         strnum, classifiedStrNum, classifiedProb =NDM(img_dd, count)

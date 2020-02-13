@@ -64,12 +64,18 @@ for n in files:
         print('Read API ==>  ',count,)
 
         #img1, img_m, img_dd, area, prob=DDNB(img_dd,orp1.dgm_ocr_url,orp1.headers)
+        
+        # Test run 
         #Read_Number, TotalProb=readapi_3_1(n, orp1.read_ocr_url, orp1.subscription)
-        Read_Number, TotalProb=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription, count, count)
+        
+        # Normal Run 
         #Read_Number, TotalProb=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription, count, count)
+        Read_Number, TotalProb =readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription, count, count)
+
         print('Number from API ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
         ExtractNumber = Read_Number
-
+        #prob=TotalProb
+        #RealProp=TotalProb
 
         """
         if len(Read_Number) > 0:
