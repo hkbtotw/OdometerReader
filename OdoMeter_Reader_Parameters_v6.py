@@ -12,10 +12,11 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, Polygon
 from PIL import Image,  ImageEnhance,ExifTags, ImageDraw
 from scipy.ndimage.filters import median_filter
+from scipy.signal import find_peaks
 
 # Mac Endpoint (Use if TT enpoint is out of limit at certain period of time due to free plan selection)
 mac_ep2="https://southeastasia.api.cognitive.microsoft.com/"
-mac_sub2='2931247984204b1c997ad8ebcc1c80b7'
+mac_sub2='f34ac0f710884d41a55d6385545c2962'
 
 # Meter Detection
 dm_endpoint="https://southeastasia.api.cognitive.microsoft.com/"
@@ -24,11 +25,15 @@ dm_ocr_url = dm_endpoint + "customvision/v3.0/Prediction/95dba6d3-4d44-4b23-bad3
 
 
 # Digit location
-mac_endpoint="https://southeastasia.api.cognitive.microsoft.com/"
+mac_endpoint="https://eastus.api.cognitive.microsoft.com/"
 mac_ocr_url = mac_endpoint + "customvision/v3.0/Prediction/b62e724e-6590-4317-8424-32f96223f8dd/detect/iterations/Iteration35/image"
 
-mac_subscription='2931247984204b1c997ad8ebcc1c80b7'
+mac_subscription='4dcf0fb76847411382a3983c87a82e7c'
 mac_headers = {'Prediction-Key': mac_subscription, 'Content-Type': 'application/octet-stream'}
+
+#Gray_Full+Semi recognition by Classfication
+mac_GFS_cl_ocr_url = mac_endpoint + "customvision/v3.0/Prediction/433bd650-ef35-48f6-aeb0-e9b7f4071f2b/classify/iterations/Iteration2/image"
+
 
 #Read API
 read_ocr_url = dm_endpoint +"vision/v2.0/read/core/asyncBatchAnalyze"
@@ -418,6 +423,66 @@ def Number_Reader_ReadAPI_3_1(img_path, ocr_url, subscription):
     #plt.show()
     plt.close()
     return result, TotalProb
+
+# Custom vision - Digit Recognition by Classification ( Need updated training dataset )  (Ongoing)
+def Number_Detection_Classification_2(img,mac_ocr_url,mac_headers):
+    image_data = img
+    #image_path1 =r'C:\Users\70018928\Documents\Project 2019\Ad-hoc\Odometer_Image\Meter_Detection\Original_Image\pil_1.jpg'
+    #image_data.save(image_path1, quality=100)
+    #img = cv2.imread(image_path)
+    img = cv2.cvtColor(np.array(image_data), cv2.COLOR_RGB2BGR)
+    #print(' ==== >>>>> ',type(img))
+    #print('RUN!!!==== >>>>Number_Detection_Classification_2')
+    #dst = cv2.fastNlMeansDenoisingColored(img,None,10,10,7,21)
+    dst3 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    dst2 = cv2.fastNlMeansDenoising(dst3,None,6,7,21)
+    #dst2 = cv2.fastNlMeansDenoising(img,None,7,7,21)
+    medfilter=median_filter(dst2,1)
+    lap=cv2.Laplacian(medfilter,cv2.CV_64F)
+    dst=medfilter-0.7*lap
+
+    success, encoded_image = cv2.imencode('.jpg', dst)
+    image_data = encoded_image.tobytes()
+
+    #print(' image_data : ',type(image_data))
+    #plt.show(image_data)
+    
+    response = requests.post(mac_ocr_url, headers=mac_headers, data = image_data)
+    response.raise_for_status()
+    analysis = response.json()
+    #print(' ==> analysis : ',analysis)
+    # Extract the word bounding boxes and text.
+    line_infos = analysis["predictions"]
+    word_infos = []
+    #image = Image.open(image_path)
+    image=image_data
+    #im_width, im_height = image.size
+    #print(' image : ',type(image), ' ==> ',im_width,':',im_height)
+    #ax = plt.imshow(image, alpha=0.5)
+
+    df_line = pd.DataFrame(columns = ['tag','prob'])
+    
+    #print(" - Probability - TagName")
+    for line in line_infos:
+        if( line['probability']>0.3 ):  
+            newrow= {'tag':line['tagName'],'prob':line['probability'] }
+            df_line = df_line.append(newrow, ignore_index=True)
+            prob_text='{0:.1f}'.format(line['probability']*100)
+            #print(' ==> ',line['probability'], '====> ',line['tagName'])
+            text=line['tagName']+', '+str(prob_text)+'%'
+            
+    df_line=df_line.sort_values(by=['prob'],ascending=False).reset_index()
+    df_out=df_line.loc[df_line.prob==df_line.prob.max()]
+
+    maxprob=df_out.prob.max()
+    #df_line=df_line.drop(columns=['index']).reset_index()
+    #print(' max prob : ',maxprob)
+
+    #print(' df_line == > ',df_line['tag'].iloc[0][:1], ' :: ',df_line['prob'].iloc[0])
+    Output=df_line['tag'].iloc[0][:1]
+    Prob=df_line['prob'].iloc[0]
+
+    return Output, Prob
 
 # Custom vision - Object Detection ( Detect DigitBar )  (Active)
 def Detect_Meter(img_path,ocr_url,headers):
@@ -1004,3 +1069,196 @@ def Number_Reader_ReadAPI_3_5(image, ocr_url, subscription,meterType):
 
 
     return result, TotalProb
+
+# Find horizontal cut points, Code used for Analog  Meter (Cut Digit from Cropped number bar image)
+def LocateNumber_2(imageIn):
+    
+    hsv_img = cv2.cvtColor(np.array(imageIn), cv2.COLOR_BGR2HSV)
+    h, s, v = hsv_img[:, :, 0], hsv_img[:, :, 1], hsv_img[:, :, 2]
+
+    #plt.imshow(s)
+    #plt.show()
+
+    #print(s, ' ==> ',s.shape)
+    proj = np.sum(s,0)  # Compute Horizontal projection with 0 , Vertical with 1 as argument
+    #print(' ==> ', np.mean(proj))
+
+    nlen=len(proj)
+    plist = proj.tolist()
+    pindex=list(range(1,nlen+1))
+    #print(' == ', proj, ' == ', type(proj), '  len : ',nlen, ' ; ',plist, ' ... ', type(plist), ' -- ', pindex)
+
+    parray = np.asarray(pindex)
+    dataarray = np.asarray(plist)
+
+    # Fit data with polynomail order 30th
+    zp = np.polyfit(parray, dataarray, 35) 
+    p = np.poly1d(zp)
+    pin=p(pindex)    
+    _ = plt.plot(pindex, dataarray, '.', pindex, pin, '-')
+
+    peaks, _ = find_peaks(-pin, prominence=1.5)
+    #print(' peak x :', peaks)
+    #plt.plot(proj)
+    #plt.plot(peaks, pin[peaks], "x")
+    #plt.show()
+    plt.close()
+
+    return peaks
+
+# Find vertical cut points, Code used for Analog  Meter - input as filepath (Cut Digit from Cropped number bar image)
+def LocateVerticalPoint(path):
+    imageA = cv2.imread(path)
+    hsv_img = cv2.cvtColor(imageA, cv2.COLOR_BGR2HSV)
+    h, s, v = hsv_img[:, :, 0], hsv_img[:, :, 1], hsv_img[:, :, 2]
+    #print(s, ' ==> ',s.shape)
+    proj = np.sum(s,1)  # Compute Horizontal projection with 0 , Vertical with 1 as argument
+    #print(' :: ',proj)
+    #print(' ==> ', np.mean(proj) )
+
+    plen=len(proj)
+    pstart=proj[0]
+    pend=proj[plen-1]
+    #print(' > ', plen, ' ==> ', pstart, ', ', pend)
+    pStartRange=[0.8*pstart, 1.2*pstart]
+    pEndRange=[0.8*pend, 1.2*pend]
+
+    #print(' >> ', pStartRange, ' == ', pEndRange)
+    pStartCut=0
+    pEndCut=plen-1
+    for n in range(0,plen):
+        if(proj[n]<pStartRange[0] or proj[n]>pStartRange[1]):
+            pStartCut=n
+            #print(' pStartCut >>> ', pStartCut)
+            break
+    for n in range(plen-1,0,-1):
+        #print(' >>>> ', n)
+        if(proj[n]<pEndRange[0] or proj[n]>pEndRange[1]):
+            pEndCut=n
+            #print(' pEndCut >>> ', pEndCut)
+            break
+    #plt.plot(proj)
+    #plt.plot(peaks, pin[peaks], "x")
+    #plt.show()
+    #print(' >>> ', pStartCut, ' :: ', pEndCut)
+    return pStartCut, pEndCut
+
+# Find vertical cut points, Code used for Analog  Meter - input as image (Cut Digit from Cropped number bar image)
+def LocateVerticalPoint_2(imageIn):
+    hsv_img = cv2.cvtColor(np.array(imageIn), cv2.COLOR_BGR2HSV)
+    h, s, v = hsv_img[:, :, 0], hsv_img[:, :, 1], hsv_img[:, :, 2]
+    #print(s, ' ==> ',s.shape)
+    proj = np.sum(s,1)  # Compute Horizontal projection with 0 , Vertical with 1 as argument
+    #print(' :: ',proj)
+    #print(' ==> ', np.mean(proj) )
+
+    plen=len(proj)
+    pstart=proj[0]
+    pend=proj[plen-1]
+    #print(' > ', plen, ' ==> ', pstart, ', ', pend)
+    pStartRange=[0.9*pstart, 1.1*pstart]
+    pEndRange=[0.9*pend, 1.1*pend]
+
+    #print(' >> ', pStartRange, ' == ', pEndRange)
+    pStartCut=0
+    pEndCut=plen-1
+    
+    for n in range(0,plen):
+        if(proj[n]<pStartRange[0] or proj[n]>pStartRange[1]):
+            pStartCut=n
+            #print(' pStartCut >>> ', pStartCut)
+            break
+    for n in range(plen-1,0,-1):
+        #print(' >>>> ', n)
+        if(proj[n]<pEndRange[0] or proj[n]>pEndRange[1]):
+            pEndCut=n
+            #print(' pEndCut >>> ', pEndCut)
+            break
+    #plt.plot(proj)
+    #plt.plot(peaks, pin[peaks], "x")
+    #plt.show()
+    #print(' >>> ', pStartCut, ' :: ', pEndCut)
+    return pStartCut, pEndCut
+
+# Custom vision - Digit Detection and Classification , Code used for Analog  Meter
+def Number_Detection_ImageProc(imageIn, fcount):
+    num_out=[]
+    classNum_out=[]
+    strnum_out=''
+    strClassNum_Out=''
+    strClassProb_Out=1.0
+    count=0
+    cropPoint=LocateNumber_2(imageIn)
+    cropList=list(cropPoint)
+    #print(' CP :', cropList)
+
+    image = imageIn
+    im_width, im_height = image.size
+    #im_height, im_width, channels = image.shape
+    #print(' image : ',type(image),' ==> ',im_width,':',im_height)
+
+    #Top, Bottom=LocateVerticalPoint(n)
+
+    ilen=len(cropList)
+    for cp in range(0,ilen-1):
+        x1=cropList[cp]
+        x2=cropList[cp+1]
+
+        # Remove first and last row pixels to assure all the unwanted top and bottom areas are removed
+        y1=0+1
+        y2=im_height-1
+        #print(' : ',x1,' : ',x2,' : ', y1,' : ', y2)
+        area=(x1,y1,x2,y2)
+        cropped_img=image.crop(area)
+        
+        #cropped_img.show()
+
+        im_widthC, im_heightC = cropped_img.size
+        Top, Bottom=LocateVerticalPoint_2(cropped_img)
+        #print(' >>> ',Top, ':: ',Bottom)
+
+        x1=0
+        x2=im_widthC
+        y1=0 # Top
+        y2=im_heightC #Bottom
+        #print(' : ',x1,' : ',x2,' : ', y1,' : ', y2)
+        area2=(x1,y1,x2,y2)
+        cropped_img_C=cropped_img.crop(area2)
+        count=count+1
+        
+
+        Read_Number, TotalProb=Number_Reader_ReadAPI_3(cropped_img_C, read_ocr_url, subscription)
+
+        #print(' count : ', Read_Number, ' :: ', TotalProb)
+        if not str(Read_Number):
+            num_out.append('X')            
+            strnum_out=strnum_out+"-"
+        else:
+            num_out.append(Read_Number)
+            strnum_out=strnum_out+str(Read_Number)
+
+    
+        # Save cropped images (PIL format)
+        #image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
+        #filename=image_path_output+'-'+str(count)+'.jpg'
+        #cropped_img_C.save(filename, quality=100)
+
+        classifiedNumber, classificationProb= Number_Detection_Classification_2(cropped_img_C,mac_GFS_cl_ocr_url,mac_headers)
+        #print(' classifiedNumber : ', classifiedNumber, ' :: ', classificationProb)
+        classNum_out.append(classifiedNumber)
+        if(classificationProb>0.85):
+            if(count<=6):
+                strClassNum_Out=strClassNum_Out+','+str(classifiedNumber)+','  
+                strClassProb_Out*=classificationProb
+        else:
+            if(count<=6):
+                strClassNum_Out=strClassNum_Out+'('+str(classifiedNumber)+')'  
+                strClassProb_Out*=classificationProb
+                #print(' LowProb Detection : ', classifiedNumber, ' , Prob : ',classificationProb)
+
+        #print(' ==> ,',count, ' :: ',strClassNum_Out, ' :: ', strClassProb_Out)
+        #cropped_img_C.show()
+        #plt.show()
+        plt.close()
+    #print(" Number =>  Class : ",strClassNum_Out, ' , API : ', num_out)
+    return strnum_out, strClassNum_Out, strClassProb_Out
