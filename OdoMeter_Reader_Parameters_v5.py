@@ -2,17 +2,15 @@ import os
 import sys
 import requests
 import time
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
-from matplotlib.patches import Polygon
-from PIL import Image,  ImageEnhance
-from io import BytesIO
 import cv2
 import glob
+import re
 import pandas as pd
 import numpy as np
-import re
-from PIL import Image, ExifTags, ImageDraw
+from io import BytesIO
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle, Polygon
+from PIL import Image,  ImageEnhance,ExifTags, ImageDraw
 from scipy.ndimage.filters import median_filter
 
 # Mac Endpoint (Use if TT enpoint is out of limit at certain period of time due to free plan selection)
@@ -119,6 +117,8 @@ def MaskArea_2(area, img_in):
     img1, img_m, img_dd, area, prob=Detect_Meter_2(image,dm_ocr_url,headers)
     return img1, img_m, img_dd, area
 
+# Add size of image to be passed to Custom Vision API
+# by applying the target image to black patch background
 def rescale_image(img):
     #Getting the bigger side of the image
     s = max(img.shape[0:2])
@@ -132,6 +132,7 @@ def rescale_image(img):
     f[ay:img.shape[0]+ay,ax:ax+img.shape[1]] = img
     return f
 
+# Custom vision - Batch Read API with Image as input (outdated)
 def Number_Reader_ReadAPI_3(image, ocr_url, subscription):
 
     nx, ny = image.size
@@ -294,6 +295,7 @@ def Number_Reader_ReadAPI_3(image, ocr_url, subscription):
     plt.close()
     return result, TotalProb
 
+# Custom vision - Batch Read API with filepath as input (outdated)
 def Number_Reader_ReadAPI_3_1(img_path, ocr_url, subscription):
     #image_data_1 = open(img_path, "rb").read()
     img1 = cv2.imread(img_path)
@@ -434,6 +436,7 @@ def Number_Reader_ReadAPI_3_1(img_path, ocr_url, subscription):
     plt.close()
     return result, TotalProb
 
+# Custom vision - Object Detection ( Detect DigitBar )  (Active)
 def Detect_Meter(img_path,ocr_url,headers):
     image_data_1 = open(img_path, "rb").read()
     img = cv2.imread(img_path)
@@ -557,6 +560,7 @@ def Detect_Meter(img_path,ocr_url,headers):
     plt.close()
     return cropped_img, cropped_img_m, cropped_img1, cv_area, maxprob, meterType
 
+# Custom vision - Object Detection ( Number in Cropped Image )  (Inactive)
 def Number_Detection(img1,ocr_url,headers):
     image_data = img1
     #image_path1 =r'C:\Users\70018928\Documents\Project 2019\Ad-hoc\Odometer_Image\Meter_Detection\Original_Image\pil_1.jpg'
@@ -632,6 +636,7 @@ def Number_Detection(img1,ocr_url,headers):
 
     return Output, Prob
 
+# Custom vision - Object Detection ( Number in Cropped Image )  (Inactive)
 def Digit_Detection(img1,ocr_url,headers):
     image = img1
     nx, ny = image.size
@@ -713,6 +718,7 @@ def Digit_Detection(img1,ocr_url,headers):
 
     return df_line
 
+# Custom vision - Object Detection and Classification ( Numbers from Cropped Image )  (Inactive)
 def Number_Reader_ReadAPI_4(image, ocr_url, subscription, df_in, mac_cl_ocr_url, mac_subscription):
     #print(' df_in : ',df_in.shape, ' ==> ',type(image))
     count=0
@@ -752,6 +758,7 @@ def Number_Reader_ReadAPI_4(image, ocr_url, subscription, df_in, mac_cl_ocr_url,
 
     return Digit, DProb
 
+# Custom vision - Classification ( Numbers from Cropped Image )  (Inactive)
 def Number_Reader_Classification(image, ocr_url, subscription, df_in):
     #print(' df_in : ',df_in.shape, ' ==> ',type(image))
     count=0
@@ -787,6 +794,7 @@ def Number_Reader_Classification(image, ocr_url, subscription, df_in):
 
     return Digit, DProb
 
+# Custom vision - Object Detection ( Numbers in Cropped Image )  (Inactive)
 def Number_Detection_Classification(img1,ocr_url,headers):
     image_data = img1
     #image_path1 =r'C:\Users\70018928\Documents\Project 2019\Ad-hoc\Odometer_Image\Meter_Detection\Original_Image\pil_1.jpg'
@@ -847,6 +855,7 @@ def Number_Detection_Classification(img1,ocr_url,headers):
 
     return Output, Prob
 
+# Order Numbers based on Position (Location) from Custom-vision (Inactive)
 def Order_Number(df_digit, Digit, DProb):
     D_zip = dict(zip(Digit, DProb))
     df_data=pd.DataFrame(columns = ['Number', 'Prob'])
@@ -868,6 +877,7 @@ def Order_Number(df_digit, Digit, DProb):
     #print(' ==> Number : ', dummy, ', Prob : ',dummyP)
     return dummy, dummyP
 
+# Custom vision - Object Detection ( Detect DigitBar )  (Inactive)
 def Detect_Meter_2(img,ocr_url,headers):
     #dst = cv2.fastNlMeansDenoisingColored(img,None,10,10,7,21)
     
@@ -977,7 +987,8 @@ def Detect_Meter_2(img,ocr_url,headers):
     #plt.show()
     plt.close()
     return cropped_img, cropped_img_m,cropped_img1, cv_area, maxprob
-    
+
+# Crop image based on location of each digit in digit bar
 def Number_Reader_Classification_2(image, ocr_url, subscription, df_in, imgpath, series, number):
     #print(' df_in : ',df_in.shape, ' ==> ',type(image))
     count=0
@@ -1004,6 +1015,7 @@ def Number_Reader_Classification_2(image, ocr_url, subscription, df_in, imgpath,
         #plt.axis("off")
         #plt.show()
 
+# Custom vision - Object Detection and Classification ( Detect DigitBar and recognize numbers )  (Inactive)
 def Detect_Meter_3(img_path,ocr_url,headers):
     image_data_1 = open(img_path, "rb").read()
     img = cv2.imread(img_path)
@@ -1122,6 +1134,7 @@ def Detect_Meter_3(img_path,ocr_url,headers):
 
     return Digit, DProb
 
+# Custom vision - Object Detection and Classification ( Detect DigitBar and recognize numbers )  (Inactive)
 def Number_Reader_ReadAPI_4_2(image, ocr_url, subscription, df_in, mac_ocr_url, mac_headers):
     #print(' df_in : ',df_in.shape, ' ==> ',type(image))
     count=0
@@ -1169,6 +1182,7 @@ def Number_Reader_ReadAPI_4_2(image, ocr_url, subscription, df_in, mac_ocr_url, 
         
     return Digit, DProb
 
+# Custom vision - Object Classification ( Recognize numbers )  (Inactive)
 def Number_Detection_Classification_2(img,mac_ocr_url,mac_headers):
     image_data = img
     #image_path1 =r'C:\Users\70018928\Documents\Project 2019\Ad-hoc\Odometer_Image\Meter_Detection\Original_Image\pil_1.jpg'
@@ -1228,6 +1242,7 @@ def Number_Detection_Classification_2(img,mac_ocr_url,mac_headers):
 
     return Output, Prob
 
+# Custom vision - Batch Read API with Image as input - GrayScale Filter for Analog & Digital (Active)
 def Number_Reader_ReadAPI_3_4(image, ocr_url, subscription, meterType):
 
     nx, ny = image.size
@@ -1452,6 +1467,7 @@ def Number_Reader_ReadAPI_3_4(image, ocr_url, subscription, meterType):
     plt.close()
     return result, TotalProb
 
+# Custom vision - Batch Read API with Image as input - Binary Filter for Digital (Active)
 def Number_Reader_ReadAPI_3_5(image, ocr_url, subscription,meterType):
 
 

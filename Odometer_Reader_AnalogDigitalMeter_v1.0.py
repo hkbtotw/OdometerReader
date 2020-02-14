@@ -34,6 +34,8 @@ df_Data=pd.DataFrame(columns = ['filename','Number', 'Meter(Confidence)','Extrac
 #Specify input path
 count = 0
 for n in files:
+
+    # Extract Solution written as part of filename to use in output table for validation
     head, tail = os.path.split(n)
     filename = tail[:len(tail)-4]
     if (filename.find('t_')>1):
@@ -46,11 +48,15 @@ for n in files:
     count = count+1
     print(' ==> ',filename ,' ==> ', RNumber)
     
-    # Detect Digitbar on the meter (Analog or Digital meter) with Custom vision - Object detection
     
     try:
+        # Detect Digitbar on the meter (Analog or Digital meter) with Custom vision - Object detection
         print('Detect Meter ==> ',count,)
         img1, img_m, img_dd, area, prob, meterType=dm(n,orp1.dm_ocr_url,orp1.headers)
+        # Remove any unwanted parts of picture which could mistakenly recognize as digitbar by applying gray patch on it
+        # and re-detect the digit bar by Custom vision-object detection
+        # This process repeats two times (there should be at most two unwanted parts to be removed)
+        # The output is the cropped image of number bar
         if(IfLicensePlatTag(img_m)==1):
             img1, img_m, img_dd, area, image_masked=MaskArea(area, image_path)
         if(IfLicensePlatTag(img_m)==1):
@@ -60,9 +66,15 @@ for n in files:
         RealProp = ''
         TrueFalse = ''
         print('Read API ==>  ',count,)
+        # Cropped image sent to Custom vision - Batch Read API (OCR) to attempt to read any numbers in it
+        # This 3-5 uses Black and White Binary Filter to process the image before calling the API
         Read_Number, TotalProb=readapi_3_5(img_dd, orp1.read_ocr_url, orp1.subscription, meterType)
         print('Number from API ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
         ExtractNumber = Read_Number
+
+        # If the image is of Digital Odometer, Use the output from 3_5
+        # Otherwise for Analog Meter, checking if 3_5 can return full 6 digits answer 
+        # or pass on to call 3_4 which uses Gray scale filter for preprocessing and call API
         if len(Read_Number) == 6 and meterType=="d_meter":
             ExtractNumber = Read_Number
             RealProp = TotalProb
@@ -74,24 +86,26 @@ for n in files:
             ExtractNumber = Read_Number
             ifexcept='yes'
     except:
-        """Read_Number, TotalProb=readapi_3_1(n, orp1.read_ocr_url, orp1.subscription)
-        print('Number from API ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
-        ExtractNumber = Read_Number
-        if len(Read_Number) > 0:
+            print(' ----------- ERROR SOMEWHERE ---------------')
+
+            """Read_Number, TotalProb=readapi_3_1(n, orp1.read_ocr_url, orp1.subscription)
+            print('Number from API ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
             ExtractNumber = Read_Number
-            RealProp = TotalProb
-            print('Decision ===>> API')
-        else:
-            print('Run====>> API+Classification ==> ') 
-            df_digit=dd(img_dd,orp1.mac_ocr_url,orp1.mac_headers)
-            Digit, DProb=Number_Reader_ReadAPI_4_2(img_dd, orp1.read_ocr_url, orp1.subscription, df_digit,orp1.mac_ocr_url,orp1.mac_headers)
-            DigitNumber, DigitProb =  Order_Number(df_digit, Digit, DProb)
-            print('Number from API+Classification ==>  ',DigitNumber,'Prop from API ==> ',DigitProb)
-            print('Decision ===>> API+Classification')
-            if len(DigitNumber) > 5:
-                DigitNumber2 = DigitNumber[:6]
-            ExtractNumber = DigitNumber2
-            RealProp = DigitProb"""
+            if len(Read_Number) > 0:
+                ExtractNumber = Read_Number
+                RealProp = TotalProb
+                print('Decision ===>> API')
+            else:
+                print('Run====>> API+Classification ==> ') 
+                df_digit=dd(img_dd,orp1.mac_ocr_url,orp1.mac_headers)
+                Digit, DProb=Number_Reader_ReadAPI_4_2(img_dd, orp1.read_ocr_url, orp1.subscription, df_digit,orp1.mac_ocr_url,orp1.mac_headers)
+                DigitNumber, DigitProb =  Order_Number(df_digit, Digit, DProb)
+                print('Number from API+Classification ==>  ',DigitNumber,'Prop from API ==> ',DigitProb)
+                print('Decision ===>> API+Classification')
+                if len(DigitNumber) > 5:
+                    DigitNumber2 = DigitNumber[:6]
+                ExtractNumber = DigitNumber2
+                RealProp = DigitProb"""
     
     ##Summarize Analysis
     if ExtractNumber==RNumber :
@@ -106,5 +120,6 @@ for n in files:
 ## Display summary
 print(' ==> ', df_Data)
 
+## Specify output location to store the output table
 file_path =r'C:\Users\70018928\Documents\Project2020\TruckOdometer\TestDigital 86 precent\Odometer_DigitalMeter_Test_2\Check_Output\COutput_Testmile2.csv'
 df_Data.to_csv(file_path)
