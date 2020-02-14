@@ -20,10 +20,8 @@ from OdoMeter_Reader_Parameters_v5 import MaskArea_2
 
 # Get file name and location
 # Specify directory in which the images are kept
-#image_path="C:/Users/70032204/Pictures/Analog/TBL_Real/"
 image_path="C:/Users/70018928/Documents/Project2020/TruckOdometer/TestDigital 86 precent/image_analogdigital/"
-#image_path="C:/Users/70018928/Documents/Project2020/TruckOdometer/TestAnalog87percent/testmile2/"
-#image_path="C:/Users/70032204/Pictures/Analog/test/"
+
 path=image_path+"*.jpg"
 files = []
 for file in glob.glob(path):
