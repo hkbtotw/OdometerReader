@@ -81,24 +81,6 @@ for n in files:
     except:
             print(' ----------- ERROR SOMEWHERE ---------------')
 
-            """Read_Number, TotalProb=readapi_3_1(n, orp1.read_ocr_url, orp1.subscription)
-            print('Number from API ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
-            ExtractNumber = Read_Number
-            if len(Read_Number) > 0:
-                ExtractNumber = Read_Number
-                RealProp = TotalProb
-                print('Decision ===>> API')
-            else:
-                print('Run====>> API+Classification ==> ') 
-                df_digit=dd(img_dd,orp1.mac_ocr_url,orp1.mac_headers)
-                Digit, DProb=Number_Reader_ReadAPI_4_2(img_dd, orp1.read_ocr_url, orp1.subscription, df_digit,orp1.mac_ocr_url,orp1.mac_headers)
-                DigitNumber, DigitProb =  Order_Number(df_digit, Digit, DProb)
-                print('Number from API+Classification ==>  ',DigitNumber,'Prop from API ==> ',DigitProb)
-                print('Decision ===>> API+Classification')
-                if len(DigitNumber) > 5:
-                    DigitNumber2 = DigitNumber[:6]
-                ExtractNumber = DigitNumber2
-                RealProp = DigitProb"""
     
     ##Summarize Analysis
     if ExtractNumber==RNumber :
