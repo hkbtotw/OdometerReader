@@ -3,13 +3,20 @@ import glob
 import numpy as np
 import pandas as pd
 import re
-import OdoMeter_Reader_Parameters_v6 as orp1
-from OdoMeter_Reader_Parameters_v6 import Detect_Meter as dm
-from OdoMeter_Reader_Parameters_v6 import Number_Reader_ReadAPI_3_4 as readapi_3_4
-from OdoMeter_Reader_Parameters_v6 import Number_Reader_ReadAPI_3_5 as readapi_3_5
-from OdoMeter_Reader_Parameters_v6 import IfLicensePlatTag
-from OdoMeter_Reader_Parameters_v6 import MaskArea
-from OdoMeter_Reader_Parameters_v6 import MaskArea_2
+import OdoMeter_Reader_Parameters_v5 as orp1
+from OdoMeter_Reader_Parameters_v5 import Digit_Detection as dd
+from OdoMeter_Reader_Parameters_v5 import Number_Reader_ReadAPI_4_2
+#from OdoMeter_Reader_Parameters_v5 import Number_Reader_Classification
+from OdoMeter_Reader_Parameters_v5 import Order_Number
+from OdoMeter_Reader_Parameters_v5 import Detect_Meter as dm
+from OdoMeter_Reader_Parameters_v5 import Detect_Meter_2 as dm2
+from OdoMeter_Reader_Parameters_v5 import Number_Reader_ReadAPI_3 as readapi_3
+from OdoMeter_Reader_Parameters_v5 import Number_Reader_ReadAPI_3_1 as readapi_3_1
+from OdoMeter_Reader_Parameters_v5 import Number_Reader_ReadAPI_3_4 as readapi_3_4
+from OdoMeter_Reader_Parameters_v5 import Number_Reader_ReadAPI_3_5 as readapi_3_5
+from OdoMeter_Reader_Parameters_v5 import IfLicensePlatTag
+from OdoMeter_Reader_Parameters_v5 import MaskArea
+from OdoMeter_Reader_Parameters_v5 import MaskArea_2
 
 # Get file name and location
 # Specify directory in which the images are kept
