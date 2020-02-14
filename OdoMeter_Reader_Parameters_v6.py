@@ -619,6 +619,8 @@ def Number_Reader_ReadAPI_3_4(image, ocr_url, subscription, meterType):
     #print(' :: ', line_infos)
     #print(' c :: ',analysis["recognitionResults"][0]["lines"])
     TotalProb=0
+    totalProbList=[]
+    totalLenList=[]
     for wb in analysis["recognitionResults"][0]["lines"]:
         sumProb=0
         sumLen=0
@@ -644,15 +646,9 @@ def Number_Reader_ReadAPI_3_4(image, ocr_url, subscription, meterType):
             sumProb=sumProb+Prob
 
             #print(' wb : ', text, ' :: ', conf, ' :: ', sumLen, '  ::  ',sumProb)
-        #print(' ==> ', sumLen, ' == ', sumProb)
-        TotalProb=0.0
-        if(sumLen<=6):
-            TotalProb=sumProb/6.0
-        else:
-            TotalProb=sumProb/sumLen    
-    #print(' total prob : ', TotalProb)
-
-
+        totalProbList.append(sumProb)    
+        totalLenList.append(sumLen)
+        #print(' ==> ', sumLen, ' == ', sumProb, ' === > ', totalProbList)
 
     word_infos = []
     for line in line_infos:
@@ -689,7 +685,7 @@ def Number_Reader_ReadAPI_3_4(image, ocr_url, subscription, meterType):
     ###############################
     # New Text output by selecting the prediction returned from Batch Read API with widest box     
     polyLen=len(polygons)
-    print(' pL : ',polyLen)
+    #print(' pL : ',polyLen)
     polyMax=0
     nMax=0
     nPos=[]
@@ -702,11 +698,30 @@ def Number_Reader_ReadAPI_3_4(image, ocr_url, subscription, meterType):
             polyMax=polyDiff
             nPos=polygons[n][0]
             nText=polygons[n][1]
-            print(' ==> ', nMax, ' --- ',nPos, ' ==== ',nText )
-    print(' F ==> ', nMax, ' --- ',nPos, ' ==== ',nText )
+            #print(' ==> ', nMax, ' --- ',nPos, ' ==== ',nText )
+    #print(' F ==> ', nMax, ' --- ',nPos, ' ==== ',nText )
+
+    TotalProb=0.0
+    if(len(totalProbList)>0):
+        sumProb=totalProbList[nMax]
+    else:
+        sumProb=0.0
+    if(len(totalLenList)>0):
+        sumLen=totalLenList[nMax]
+    else:
+        sumLen=0.0
+    if(sumLen<=6):
+        TotalProb=sumProb/6.0
+    else:
+        if(sumLen>0):
+            TotalProb=sumProb/sumLen    
+        else:
+            TotalProb=0.0
+    #print(' total prob : ', TotalProb)
+
     result1=re.sub("[^0-9]", "", nText)
     rlen=len(result1)-6
-    print(' rlen : ', rlen, ' ==> ', len(result1))
+    #print(' rlen : ', rlen, ' ==> ', len(result1))
     
     
     def ReversedString(Sin):
@@ -715,7 +730,7 @@ def Number_Reader_ReadAPI_3_4(image, ocr_url, subscription, meterType):
         while index > 0: 
             reversedString += Sin[ index - 1 ] # save the value of str[index-1] in reverseString
             index = index - 1 # decrement index
-        print(reversedString) # reversed string
+        #print(reversedString) # reversed string
         RS=''
         for ir in reversedString:
             RS=RS+ir
@@ -771,60 +786,6 @@ def Number_Reader_ReadAPI_3_4(image, ocr_url, subscription, meterType):
 # Custom vision - Batch Read API with Image as input - Binary Filter for Digital (Active)
 def Number_Reader_ReadAPI_3_5(image, ocr_url, subscription,meterType):
 
-
-    """
-    #image.show()
-    img_origin=image
-    nx, ny = image.size
-    #im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
-    im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
-    nx2, ny2 = im2.size
-    
-    im_cv = np.array(im2)
-    img3 = cv2.cvtColor(im_cv, cv2.COLOR_BGR2RGB)
-    img1 = cv2.cvtColor(np.array(im2), cv2.COLOR_BGR2GRAY)
-
-    dst2 = cv2.cvtColor(np.array(im2), cv2.COLOR_BGR2GRAY)
-    img2 = cv2.fastNlMeansDenoising(img1,None,6,21,21)
-
-    (thresh, dst) = cv2.threshold(dst2, 180, 255, cv2.THRESH_BINARY)
-
-    
-    blurred = cv2.GaussianBlur(im_cv, (5, 5), 0)
-    edges = cv2.Canny(blurred, 50, 200, 255)
-    #plt.imshow(edges)
-    #plt.show()
-
-    
-    #img = cv2.bilateralFilter(dst,9,9,9)
-    
-    # Write out processed image for checking 
-    #image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
-    #filename=image_path_output+'-'+str(fcount)+'-'+str(count)+'.jpg'
-    #cv2.imwrite(filename, img2) 
-
-    
-    #plt.imshow(img)
-    #plt.show()
-    #dst = cv2.fastNlMeansDenoising(np.array(im2),None,3,7,21)
-    #dst2 = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
-    #(thresh, dst2) = cv2.threshold(dst, 105, 255, cv2.THRESH_BINARY)
-
-    #dst2 = cv2.fastNlMeansDenoising(dst,None,6,7,21)
-    #medfilter=median_filter(img2,1)
-    #lap=cv2.Laplacian(medfilter,cv2.CV_64F)
-    #img=medfilter-0.01*lap
-
-    #img3 = cv2.medianBlur(img2,5)
-    #img = cv2.adaptiveThreshold(img3,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
-    #print(' img type: ',type(img), ' ==> ',img.shape)
-
-    #imgin=rescale_image(img3)
-    imgin=rescale_image(img2)
-    #imgin=dst
-    #plt.imshow(imgin)
-    #plt.show()
-    """
     nx, ny = image.size
     im2 = image.resize((int(nx*0.7), int(ny*0.7)), Image.BICUBIC)
     #im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
@@ -859,8 +820,6 @@ def Number_Reader_ReadAPI_3_5(image, ocr_url, subscription,meterType):
     #img = cv2.adaptiveThreshold(img3,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
     #print(' img type: ',type(img), ' ==> ',img.shape)
     imgin=rescale_image(img3)
-
-
 
     im_resize=imgin
     is_success, im_buf_arr = cv2.imencode(".jpg", im_resize)
@@ -899,8 +858,11 @@ def Number_Reader_ReadAPI_3_5(image, ocr_url, subscription,meterType):
     line_infos = [line["text"] for line in analysis["recognitionResults"][0]["lines"]]
     #conf_infos = [word["text"] for word in analysis["recognitionResults"][0]["lines"]["words"]]
     #print(' :: ', line_infos)
-    print(' c :: ',analysis["recognitionResults"][0]["lines"])
+    
+    #print(' c :: ',analysis["recognitionResults"][0]["lines"])
     TotalProb=0
+    totalProbList=[]
+    totalLenList=[]
     for wb in analysis["recognitionResults"][0]["lines"]:
         sumProb=0
         sumLen=0
@@ -926,13 +888,10 @@ def Number_Reader_ReadAPI_3_5(image, ocr_url, subscription,meterType):
             sumProb=sumProb+Prob
 
             #print(' wb : ', text, ' :: ', conf, ' :: ', sumLen, '  ::  ',sumProb)
-        #print(' ==> ', sumLen, ' == ', sumProb)
-        TotalProb=0.0
-        if(sumLen<=6):
-            TotalProb=sumProb/6.0
-        else:
-            TotalProb=sumProb/sumLen    
-    #print(' total prob : ', TotalProb)
+        totalProbList.append(sumProb)    
+        totalLenList.append(sumLen)
+        #print(' ==> ', sumLen, ' == ', sumProb, ' --- ', totalProbList)
+
 
 
 
@@ -968,11 +927,11 @@ def Number_Reader_ReadAPI_3_5(image, ocr_url, subscription,meterType):
         # Extract the recognized text, with bounding boxes.
         polygons = [(line["boundingBox"], line["text"])
                     for line in analysis["recognitionResults"][0]["lines"]]
-        print(' PG : ',polygons, ' == ', type(polygons), ' :: ',len(polygons))
+        #print(' PG : ',polygons, ' == ', type(polygons), ' :: ',len(polygons))
 
     # New Text output by selecting the prediction returned from Batch Read API with widest box     
     polyLen=len(polygons)
-    print(' pL : ',polyLen)
+    #print(' pL : ',polyLen)
     polyMax=0
     nMax=0
     nPos=[]
@@ -985,10 +944,30 @@ def Number_Reader_ReadAPI_3_5(image, ocr_url, subscription,meterType):
             polyMax=polyDiff
             nPos=polygons[n][0]
             nText=polygons[n][1]
-            print(' ==> ', nMax, ' --- ',nPos, ' ==== ',nText )
+            #print(' ==> ', nMax, ' --- ',nPos, ' ==== ',nText )
        
-    print(' F ==> ', nMax, ' --- ',nPos, ' ==== ',nText )
+    #print(' F ==> ', nMax, ' --- ',nPos, ' ==== ',nText )
     result=re.sub("[^0-9]", "", nText)
+
+    TotalProb=0.0
+    if(len(totalProbList)>0):
+        sumProb=totalProbList[nMax]
+    else:
+        sumProb=0.0
+    if(len(totalLenList)>0):
+        sumLen=totalLenList[nMax]
+    else:
+        sumLen=0.0
+    if(sumLen<=6):
+        TotalProb=sumProb/6.0
+    else:
+        if(sumLen>0):
+            TotalProb=sumProb/sumLen    
+        else:
+            TotalProb=0.0
+    #print(' total prob : ', TotalProb)
+
+
 
     # Display the image and overlay it with the extracted text.
     plt.figure(figsize=(15, 15))

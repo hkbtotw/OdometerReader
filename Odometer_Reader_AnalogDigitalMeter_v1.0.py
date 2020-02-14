@@ -77,6 +77,7 @@ for n in files:
             Read_Number, TotalProb=readapi_3_4(img_dd, orp1.read_ocr_url, orp1.subscription, meterType)
             print('Read API without thresh_tozero ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
             ExtractNumber = Read_Number
+            RealProp = TotalProb
             ifexcept='yes'
     except:
             print(' ----------- ERROR SOMEWHERE ---------------')
