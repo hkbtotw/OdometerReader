@@ -3,13 +3,20 @@ import glob
 import numpy as np
 import pandas as pd
 import re
-import OdoMeter_Reader_Parameters_v6 as orp1
-from OdoMeter_Reader_Parameters_v6 import Detect_Meter as dm
-from OdoMeter_Reader_Parameters_v6 import Number_Reader_ReadAPI_3_4 as readapi_3_4
-from OdoMeter_Reader_Parameters_v6 import Number_Reader_ReadAPI_3_5 as readapi_3_5
-from OdoMeter_Reader_Parameters_v6 import IfLicensePlatTag
-from OdoMeter_Reader_Parameters_v6 import MaskArea
-from OdoMeter_Reader_Parameters_v6 import MaskArea_2
+import OdoMeter_Reader_Parameters_v5 as orp1
+from OdoMeter_Reader_Parameters_v5 import Digit_Detection as dd
+from OdoMeter_Reader_Parameters_v5 import Number_Reader_ReadAPI_4_2
+#from OdoMeter_Reader_Parameters_v5 import Number_Reader_Classification
+from OdoMeter_Reader_Parameters_v5 import Order_Number
+from OdoMeter_Reader_Parameters_v5 import Detect_Meter as dm
+from OdoMeter_Reader_Parameters_v5 import Detect_Meter_2 as dm2
+from OdoMeter_Reader_Parameters_v5 import Number_Reader_ReadAPI_3 as readapi_3
+from OdoMeter_Reader_Parameters_v5 import Number_Reader_ReadAPI_3_1 as readapi_3_1
+from OdoMeter_Reader_Parameters_v5 import Number_Reader_ReadAPI_3_4 as readapi_3_4
+from OdoMeter_Reader_Parameters_v5 import Number_Reader_ReadAPI_3_5 as readapi_3_5
+from OdoMeter_Reader_Parameters_v5 import IfLicensePlatTag
+from OdoMeter_Reader_Parameters_v5 import MaskArea
+from OdoMeter_Reader_Parameters_v5 import MaskArea_2
 
 # Get file name and location
 # Specify directory in which the images are kept
@@ -81,6 +88,24 @@ for n in files:
     except:
             print(' ----------- ERROR SOMEWHERE ---------------')
 
+            """Read_Number, TotalProb=readapi_3_1(n, orp1.read_ocr_url, orp1.subscription)
+            print('Number from API ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
+            ExtractNumber = Read_Number
+            if len(Read_Number) > 0:
+                ExtractNumber = Read_Number
+                RealProp = TotalProb
+                print('Decision ===>> API')
+            else:
+                print('Run====>> API+Classification ==> ') 
+                df_digit=dd(img_dd,orp1.mac_ocr_url,orp1.mac_headers)
+                Digit, DProb=Number_Reader_ReadAPI_4_2(img_dd, orp1.read_ocr_url, orp1.subscription, df_digit,orp1.mac_ocr_url,orp1.mac_headers)
+                DigitNumber, DigitProb =  Order_Number(df_digit, Digit, DProb)
+                print('Number from API+Classification ==>  ',DigitNumber,'Prop from API ==> ',DigitProb)
+                print('Decision ===>> API+Classification')
+                if len(DigitNumber) > 5:
+                    DigitNumber2 = DigitNumber[:6]
+                ExtractNumber = DigitNumber2
+                RealProp = DigitProb"""
     
     ##Summarize Analysis
     if ExtractNumber==RNumber :

@@ -15,13 +15,15 @@ from OdoMeter_Reader_Parameters_v4 import Number_Reader_ReadAPI_3_1 as readapi_3
 from OdoMeter_Reader_Parameters_v4 import IfLicensePlatTag
 from OdoMeter_Reader_Parameters_v4 import MaskArea
 from OdoMeter_Reader_Parameters_v4 import MaskArea_2
-
+from OdoMeter_Reader_Parameters_v4 import Detect_Digital_Number_Bar as DDNB
 
 # Get file name and location
+
 # Specify directory in which the images are kept
-#image_path="C:/Users/70032204/Pictures/Analog/TBL_Real/"
-image_path="Desktop/IMG_9007"
-#image_path="C:/Users/70032204/Pictures/Analog/test/"
+image_path="C:/Users/70018928/Documents/GitHub/OdometerReader/DigitalTestImage/"
+
+image_path_output="C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/"
+
 path=image_path+"*.jpg"
 files = []
 for file in glob.glob(path):
@@ -29,7 +31,7 @@ for file in glob.glob(path):
 #print(' ==> ',files)
 
 #Prepare table
-df_Data=pd.DataFrame(columns = ['filename','Number', 'Meter(Confidence)','Extract Number','Confidence'])
+df_Data=pd.DataFrame(columns = ['filename','Number', 'Meter(Confidence)','Extract Number','Confidence','Check'])
 #================================================================================
 #Specify input path
 count = 0
@@ -47,7 +49,7 @@ for n in files:
     print(' ==> ',filename ,' ==> ', RNumber)
     
     # Detect Digitbar on the meter (Analog or Digital meter) with Custom vision - Object detection
-    
+
     try:
         print('Detect Meter ==> ',count,)
         img1, img_m, img_dd, area, prob=dm(n,orp1.dm_ocr_url,orp1.headers)
@@ -60,8 +62,22 @@ for n in files:
         RealProp = ''
         TrueFalse = ''
         print('Read API ==>  ',count,)
-        Read_Number, TotalProb=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription)
+
+        #img1, img_m, img_dd, area, prob=DDNB(img_dd,orp1.dgm_ocr_url,orp1.headers)
+        
+        # Test run 
+        #Read_Number, TotalProb=readapi_3_1(n, orp1.read_ocr_url, orp1.subscription)
+        
+        # Normal Run 
+        #Read_Number, TotalProb=readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription, count, count)
+        Read_Number, TotalProb =readapi_3(img_dd, orp1.read_ocr_url, orp1.subscription, count, count)
+
         print('Number from API ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
+        ExtractNumber = Read_Number
+        #prob=TotalProb
+        #RealProp=TotalProb
+
+        """
         if len(Read_Number) > 0:
             ExtractNumber = Read_Number
             RealProp = TotalProb
@@ -77,7 +93,9 @@ for n in files:
                 DigitNumber2 = DigitNumber[:6]
             ExtractNumber = DigitNumber2
             RealProp = DigitProb
+        """   
     except:
+        """
         Read_Number, TotalProb=readapi_3_1(n, orp1.read_ocr_url, orp1.subscription)
         print('Number from API ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
         if len(Read_Number) > 0:
@@ -95,6 +113,8 @@ for n in files:
                 DigitNumber2 = DigitNumber[:6]
             ExtractNumber = DigitNumber2
             RealProp = DigitProb
+        """
+        print(' ERROR somewhere')
     
     ##Summarize Analysis
     if ExtractNumber==RNumber :
@@ -109,5 +129,7 @@ for n in files:
 ## Display summary
 print(' ==> ', df_Data)
 
-file_path =r'Desktop\Output.csv'
+file_path =r'C:\Users\70018928\Documents\GitHub\OdometerReader\Output_TestImage\Output.csv'
 df_Data.to_csv(file_path)
+
+print(' ========= Complete ========== ')

@@ -1,0 +1,100 @@
+,filename,Meter(Confidence),ReadAPI(ALL),ReadAPI(Separated),Classification,ClassificationProb
+0,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/1.jpg,0.928571429,90715,-9---5---,"(0)(6),0,,7,(1),5,",0.161315377
+1,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/2.jpg,0.5,90745,-----5---,"(0),9,,0,,7,,4,,5,",0.409160804
+2,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/3.jpg,0,,-90-65---,",0,(9),7,(6),5,,7,",0.2285033
+3,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/4.jpg,1,90766,-90-66--,",0,(8),7,,6,,6,,1,",0.415402538
+4,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/5.jpg,0.785714286,90755,-9--5---,"(6)(6),0,,7,,5,,5,",0.2207971
+5,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/6.jpg,0.666666667,101715,-----5---,",1,(6)(1),7,(1),5,",0.125851238
+6,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/7.jpg,0.5,101726,----5---,"(0)(1),7,,2,,5,(5)",0.189463963
+7,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/8.jpg,1,101726,,,0
+8,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/9.jpg,0.5,101726,----26---,",1,,0,(1),7,,2,,6,",0.360108044
+9,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/10.jpg,1,101755,----55--,"(8)(0),1,,7,,5,,5,",0.235015279
+10,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/11.jpg,0.714285714,112755,--2-55---,",1,(1)(2),7,,5,,5,",0.428325395
+11,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/12.jpg,0.642857143,112756,--2-56---,"(1)(1)(2),7,,5,,6,",0.138957883
+12,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/13.jpg,0.5,212715,--2--5---,",2,(1),2,,7,(8),5,",0.278699756
+13,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/14.jpg,0.5,212726,--2-26---,",2,,1,,2,,7,(2),6,",0.659010189
+14,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/15.jpg,0.928571429,212736,--2-36--,",2,,1,,2,,7,,3,,6,",0.808177681
+15,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/16.jpg,0.75,22371,223------,",2,,2,(2),7,,1,,5,",0.278601464
+16,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/17.jpg,0.571428571,223725,-23--5--,",2,(2)(6),7,(5),5,",0.235313469
+17,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/18.jpg,0.642857143,223735,-23-35--,",2,,2,(6),7,(3),5,",0.17297441
+18,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/19.jpg,0.642857143,223735,-23-35--,",2,,2,(3),7,(3),5,",0.359647633
+19,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/20.jpg,0.5,223745,-23-4---,",2,,2,(6),7,,4,(6)",0.125653234
+20,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/21.jpg,0.714285714,223746,,,0
+21,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/22.jpg,0.571428571,223745,-23--5---,",2,(2)(3),7,(4),5,",0.299516062
+22,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/23.jpg,0.5,223746,-23--6--,",2,,2,(3),7,,4,,6,",0.610371003
+23,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/24.jpg,0.5,257456,-25-4---,",2,,2,,5,,7,(4),5,",0.709950393
+24,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/25.jpg,0.785714286,293906,2939-6---,"(2),9,(5),9,(0),6,",0.200603079
+25,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/26.jpg,0.5,323726,----26--,"(5)(2)(6),7,,2,,6,",0.252096654
+26,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/27.jpg,0.5,323726,-2326---,"(6),2,(7),2,,6,,6,",0.291379152
+27,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/28.jpg,0.571428571,323736,-23--6--,",3,,2,(3),7,(5),6,",0.214441691
+28,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/29.jpg,0.857142857,323736,-23-36--,"(3),2,,3,,7,,3,,6,",0.399588954
+29,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/30.jpg,0.583333333,324726,-24-26--,",3,,2,,4,,7,,2,,6,",0.926223024
+30,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/31.jpg,0.5,324726,,,0
+31,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/32.jpg,0.5,324736,-2--36---,"(2),2,(4),7,(3),6,",0.101669749
+32,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/33.jpg,0.5,324736,324-36--,",3,(2)(4),7,(3),6,",0.367360331
+33,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/34.jpg,0.5,325736,-25-36--,",3,,2,,5,,7,,3,,6,",0.892036865
+34,C:/Users/70018928/Documents/GitHub/OdometerReader/Output_TestImage/35.jpg,0.857142857,326736,,,0
+35,770725(,0,,,,0
+36,771766( (2),0,,,,0
+37,771766(,0,,,,0
+38,779725( (2),0,,,,0
+39,779725(,0,,,,0
+40,779745(,0,,,,0
+41,870745( (2),0,,,,0
+42,870745( (3),0,,,,0
+43,870745(,0,,,,0
+44,870746( (2),0,,,,0
+45,870746(,0,,,,0
+46,870756( (2),0,,,,0
+47,870756(,0,,,,0
+48,879705(,0,,,,0
+49,879715(,0,,,,0
+50,879725( (2),0,,,,0
+51,879725(,0,,,,0
+52,879735( (2),0,,,,0
+53,879735( (3),0,,,,0
+54,879735(,0,,,,0
+55,879736(,0,,,,0
+56,879745(,0,,,,0
+57,879746(,0,,,,0
+58,879756(,0,,,,0
+59,879795(,0,,,,0
+60,880725(,0,,,,0
+61,880745( (2),0,,,,0
+62,880745(,0,,,,0
+63,881736(,0,,,,0
+64,881755( (2),0,,,,0
+65,881755( (3),0,,,,0
+66,881755(,0,,,,0
+67,881766(,0,,,,0
+68,980736(,0,,,,0
+69,980745(,0,,,,0
+70,980746(,0,,,,0
+71,980755( (2),0,,,,0
+72,980755(,0,,,,0
+73,980756( (2),0,,,,0
+74,980756(,0,,,,0
+75,980766(,0,,,,0
+76,989705( (2),0,,,,0
+77,989705(,0,,,,0
+78,989725(,0,,,,0
+79,989726(,0,,,,0
+80,989736( (2),0,,,,0
+81,989736(,0,,,,0
+82,989746(,0,,,,0
+83,989756(,0,,,,0
+84,989766( (2),0,,,,0
+85,989766(,0,,,,0
+86,989795(,0,,,,0
+87,991725(,0,,,,0
+88,991756( (2),0,,,,0
+89,991756(,0,,,,0
+90,992725(,0,,,,0
+91,992745( (2),0,,,,0
+92,992745(,0,,,,0
+93,993756( (2),0,,,,0
+94,993756(,0,,,,0
+95,994756(,0,,,,0
+96,994756,0,,,,0
+97,994766( (2),0,,,,0
+98,994766(,0,,,,0
