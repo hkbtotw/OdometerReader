@@ -7,13 +7,10 @@ Odometer_Reader_AnalogDigitalMeter_v1.0.py reads Images in TestImage and detect 
 (Please note that the subscription was taken off and this information could be found in the local drive)
 
 <b>Step:</b><br />
-1.Code reads the image from local drive
-
-2.Number bar detection by Object Recognition (Cognitive Service) 
-
-3.Image processing (Filtering) used to process the image (Grayscale and Binary used for Analog Meter and Binary used for Digital Meter)
-
-4.Batch Read API (Cognitive Service) reads the number out of the meter image
+1.Code reads the image from local drive<br />
+2.Number bar detection by Object Recognition (Cognitive Service) <br />
+3.Image processing (Filtering) used to process the image (Grayscale and Binary used for Analog Meter and Binary used for Digital Meter) <br />
+4.Batch Read API (Cognitive Service) reads the number out of the meter image <br />
 
 Sample Images:<br/>
 Analog Meter
