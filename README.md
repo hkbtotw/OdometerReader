@@ -17,6 +17,14 @@ Analog Meter
 
 <img src=https://github.com/hkbtotw/OdometerReader/blob/master/TestImage/IMG_9090_[052334]_A1.JPG alt="Analog" width="200"/>
 
+Detected Analog Digitbar by Object Detection
+
+<img src=https://github.com/hkbtotw/OdometerReader/blob/master/TestImage/DetectedAnalog.JPG alt="Detected Analog" width="200"/>
+
 Digital Meter:
 
 <img src=https://github.com/hkbtotw/OdometerReader/blob/master/TestImage/IMG_9028[278168].JPG alt="Digital" width="200"/>
+
+Detected Digital Digitbar by Object Detection
+
+<img src=https://github.com/hkbtotw/OdometerReader/blob/master/TestImage/DetectedDigital.JPG alt="Detected Analog" width="200"/>
