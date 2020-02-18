@@ -16,8 +16,10 @@ Step:
 4.Batch Read API (Cognitive Service) reads the number out of the meter image
 
 Sample Images:<br/>
-Analog Meter<:br/>
+Analog Meter
+
 <img src=https://github.com/hkbtotw/OdometerReader/blob/master/TestImage/IMG_9090_[052334]_A1.JPG alt="Analog" width="200"/>
 
-Digital Meter:<br/>
+Digital Meter:
+
 <img src=https://github.com/hkbtotw/OdometerReader/blob/master/TestImage/IMG_9028[278168].JPG alt="Digital" width="200"/>
