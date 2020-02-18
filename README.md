@@ -6,7 +6,7 @@ Odometer_Reader_AnalogDigitalMeter_v1.0.py reads Images in TestImage and detect 
 
 (Please note that the subscription was taken off and this information could be found in the local drive)
 
-<b>Step:</b>
+<b>Step:</b><br />
 1.Code reads the image from local drive
 
 2.Number bar detection by Object Recognition (Cognitive Service) 
