@@ -1,12 +1,12 @@
-Complete Odometer Reader Program
+<h1>Complete Odometer Reader Program</h1>
 
-Computer Vision Code: Read Numbers from Truck Odometer
+<h2>Computer Vision Code: Read Numbers from Truck Odometer</h2>
 
 Odometer_Reader_AnalogDigitalMeter_v1.0.py reads Images in TestImage and detect and predict numbers in the Odometer images. Odometer_Reader_Parameter_v6 contains Parameters and Functions used in the main code
 
 (Please note that the subscription was taken off and this information could be found in the local drive)
 
-Step:
+<b>Step:</b>
 1.Code reads the image from local drive
 
 2.Number bar detection by Object Recognition (Cognitive Service) 
