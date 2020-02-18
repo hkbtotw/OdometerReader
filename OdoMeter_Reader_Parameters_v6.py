@@ -16,11 +16,11 @@ from scipy.signal import find_peaks
 
 # Mac Endpoint (Use if TT enpoint is out of limit at certain period of time due to free plan selection)
 mac_ep2="https://southeastasia.api.cognitive.microsoft.com/"
-mac_sub2='f34ac0f710884d41a55d6385545c2962'
+mac_sub2='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 
 # Meter Detection
 dm_endpoint="https://southeastasia.api.cognitive.microsoft.com/"
-subscription='2931247984204b1c997ad8ebcc1c80b7'
+subscription='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 dm_ocr_url = dm_endpoint + "customvision/v3.0/Prediction/95dba6d3-4d44-4b23-bad3-dd9d0a15090e/detect/iterations/Iteration3/image"
 
 
@@ -28,7 +28,7 @@ dm_ocr_url = dm_endpoint + "customvision/v3.0/Prediction/95dba6d3-4d44-4b23-bad3
 mac_endpoint="https://eastus.api.cognitive.microsoft.com/"
 mac_ocr_url = mac_endpoint + "customvision/v3.0/Prediction/b62e724e-6590-4317-8424-32f96223f8dd/detect/iterations/Iteration35/image"
 
-mac_subscription='4dcf0fb76847411382a3983c87a82e7c'
+mac_subscription='xxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 mac_headers = {'Prediction-Key': mac_subscription, 'Content-Type': 'application/octet-stream'}
 
 #Gray_Full+Semi recognition by Classfication
@@ -427,7 +427,7 @@ def Number_Reader_ReadAPI_3_1(img_path, ocr_url, subscription):
 # Custom vision - Digit Recognition by Classification ( Need updated training dataset )  (Ongoing)
 def Number_Detection_Classification_2(img,mac_ocr_url,mac_headers):
     image_data = img
-    #image_path1 =r'C:\Users\70018928\Documents\Project 2019\Ad-hoc\Odometer_Image\Meter_Detection\Original_Image\pil_1.jpg'
+    #image_path1 =r'\pil_1.jpg'
     #image_data.save(image_path1, quality=100)
     #img = cv2.imread(image_path)
     img = cv2.cvtColor(np.array(image_data), cv2.COLOR_RGB2BGR)
@@ -613,7 +613,6 @@ def Number_Reader_ReadAPI_3_4(image, ocr_url, subscription, meterType):
 
     nx, ny = image.size
     im2 = image.resize((int(nx*0.7), int(ny*0.7)), Image.BICUBIC)
-    #im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
 
     nx2, ny2 = im2.size
     
@@ -853,7 +852,6 @@ def Number_Reader_ReadAPI_3_5(image, ocr_url, subscription,meterType):
 
     nx, ny = image.size
     im2 = image.resize((int(nx*0.7), int(ny*0.7)), Image.BICUBIC)
-    #im2 = image.resize((int(nx*1.0), int(ny*1.0)), Image.BICUBIC)
 
     nx2, ny2 = im2.size
     
@@ -1075,19 +1073,15 @@ def LocateNumber_2(imageIn):
     
     hsv_img = cv2.cvtColor(np.array(imageIn), cv2.COLOR_BGR2HSV)
     h, s, v = hsv_img[:, :, 0], hsv_img[:, :, 1], hsv_img[:, :, 2]
-
     #plt.imshow(s)
     #plt.show()
-
-    #print(s, ' ==> ',s.shape)
+    
     proj = np.sum(s,0)  # Compute Horizontal projection with 0 , Vertical with 1 as argument
-    #print(' ==> ', np.mean(proj))
 
     nlen=len(proj)
     plist = proj.tolist()
     pindex=list(range(1,nlen+1))
-    #print(' == ', proj, ' == ', type(proj), '  len : ',nlen, ' ; ',plist, ' ... ', type(plist), ' -- ', pindex)
-
+    
     parray = np.asarray(pindex)
     dataarray = np.asarray(plist)
 
@@ -1111,10 +1105,7 @@ def LocateVerticalPoint(path):
     imageA = cv2.imread(path)
     hsv_img = cv2.cvtColor(imageA, cv2.COLOR_BGR2HSV)
     h, s, v = hsv_img[:, :, 0], hsv_img[:, :, 1], hsv_img[:, :, 2]
-    #print(s, ' ==> ',s.shape)
     proj = np.sum(s,1)  # Compute Horizontal projection with 0 , Vertical with 1 as argument
-    #print(' :: ',proj)
-    #print(' ==> ', np.mean(proj) )
 
     plen=len(proj)
     pstart=proj[0]
@@ -1147,10 +1138,7 @@ def LocateVerticalPoint(path):
 def LocateVerticalPoint_2(imageIn):
     hsv_img = cv2.cvtColor(np.array(imageIn), cv2.COLOR_BGR2HSV)
     h, s, v = hsv_img[:, :, 0], hsv_img[:, :, 1], hsv_img[:, :, 2]
-    #print(s, ' ==> ',s.shape)
     proj = np.sum(s,1)  # Compute Horizontal projection with 0 , Vertical with 1 as argument
-    #print(' :: ',proj)
-    #print(' ==> ', np.mean(proj) )
 
     plen=len(proj)
     pstart=proj[0]
@@ -1194,8 +1182,7 @@ def Number_Detection_ImageProc(imageIn, fcount):
 
     image = imageIn
     im_width, im_height = image.size
-    #im_height, im_width, channels = image.shape
-    #print(' image : ',type(image),' ==> ',im_width,':',im_height)
+
 
     #Top, Bottom=LocateVerticalPoint(n)
 
@@ -1239,7 +1226,7 @@ def Number_Detection_ImageProc(imageIn, fcount):
 
     
         # Save cropped images (PIL format)
-        #image_path_output =r'C:/Users/70018928/Documents/Project2020/TruckOdometer/20200203/Test_SSM_1/out_image/'
+        #image_path_output =r'/out_image/'
         #filename=image_path_output+'-'+str(count)+'.jpg'
         #cropped_img_C.save(filename, quality=100)
 

@@ -15,10 +15,9 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-
 # Get file name and location
 # Specify directory in which the images are kept
-image_path="C:/Users/70018928/Documents/Project2020/TruckOdometer/TestAnalog87percent/testmile/"
+image_path="/testmile/"
 path=image_path+"*.jpg"
 files = []
 for file in glob.glob(path):
@@ -44,7 +43,6 @@ for n in files:
         end = filename.find(']')
         RNumber= filename[start+1:end]
     count = count+1
-    #print(' ==> ',filename ,' ==> ', RNumber)
     
     
     try:
@@ -69,7 +67,7 @@ for n in files:
         # Cropped image sent to Custom vision - Batch Read API (OCR) to attempt to read any numbers in it
         # This 3-5 uses Black and White Binary Filter to process the image before calling the API
         Read_Number, TotalProb=readapi_3_5(img_dd, orp1.read_ocr_url, orp1.subscription, meterType)
-        #print('Number from API ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
+        
         ExtractNumber = Read_Number
 
         if(meterType=="a_meter"):
@@ -84,11 +82,8 @@ for n in files:
             ExtractNumber = Read_Number
             RealProp = TotalProb
             ifexcept='no'
-            #print('Decision ===>> API')
         else:
             Read_Number, TotalProb=readapi_3_4(img_dd, orp1.read_ocr_url, orp1.subscription, meterType)
-            #print('Read API without thresh_tozero ==>  ',Read_Number,'Prop from API ==> ',TotalProb)
-
             ExtractNumber = Read_Number
             RealProp = TotalProb
             ifexcept='yes'
@@ -110,5 +105,5 @@ for n in files:
 print(' ==> ', df_Data)
 
 ## Specify output location to store the output table
-file_path =r'C:\Users\70018928\Documents\Project2020\TruckOdometer\TestDigital 86 precent\Odometer_DigitalMeter_Test_2\Check_Output\COutput_Testmile2.csv'
+file_path =r'Output.csv'
 df_Data.to_csv(file_path)
