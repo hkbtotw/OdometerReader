@@ -1,5 +1,5 @@
 <h1>Odometer Reader Program</h1>
-(Complete Prototype Phase)
+(Complete Prototype Phase on 20200218)
 <h2>Computer Vision Code: Read Numbers from Truck Odometer</h2>
 
 Odometer_Reader_AnalogDigitalMeter_v1.0.py reads Images in TestImage and detect and predict numbers in the Odometer images. Odometer_Reader_Parameter_v6 contains Parameters and Functions used in the main code
