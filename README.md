@@ -27,4 +27,4 @@ Digital Meter:
 
 Detected Digital Digitbar by Object Detection
 
-<img src=https://github.com/hkbtotw/OdometerReader/blob/master/TestImage/DetectedDigital.JPG alt="Detected Analog" width="200"/>
+<img src=https://github.com/hkbtotw/OdometerReader/blob/master/TestImage/DetectedDigital.JPG alt="Detected Digital" width="200"/>
